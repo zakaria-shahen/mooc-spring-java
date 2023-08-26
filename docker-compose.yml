@@ -1,8 +1,11 @@
+#version: "3.8"
 services:
   db:
+    container_name: oracle_db_mooc
     image: container-registry.oracle.com/database/free
     environment:
       - ORACLE_PWD=password
-      - ORACLE_SID=mooc
+#      - ORACLE_SID=mooc
+#      - service name is `free` by default
     ports:
-      - 1521:1521
+      - "1521:1521"
