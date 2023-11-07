@@ -1,29 +1,30 @@
 package com.example.mooc.model;
 
 import com.example.mooc.utils.SQLQueryBuilderUtils;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 
-public record BootcampModel(
-        @NonNull Long id,
-        @NonNull String name,
-        @NonNull String description,
-        @NonNull String website,
-        @NonNull String phone,
-        @NonNull String email,
-        @NonNull String address,
-        @NonNull Boolean housing,
-        Boolean jobAssistance,
-        Boolean jobGuarantee,
-        BigDecimal averageCost,
-        Float averageRating,
-        @NonNull Long userId
+@Getter
+@Setter
+@AllArgsConstructor
+@RequiredArgsConstructor
+@ToString
+public class BootcampModel {
+    private Long id;
+    @NonNull private String name;
+    @NonNull private String description;
+    @NonNull private String website;
+    @NonNull private String phone;
+    @NonNull private String email;
+    @NonNull private String address;
+    @NonNull private Boolean housing;
+    private Boolean jobAssistance;
+    private Boolean jobGuarantee;
+    private BigDecimal averageCost;
+    private Float averageRating;
+    @NonNull private Long userId;
 
-) {
     public static final SQLQueryBuilderUtils sqlModuleUtils = new SQLQueryBuilderUtils(BootcampModel.class);
-
-    public BootcampModel(@NonNull Long id, @NonNull String name, @NonNull String description, @NonNull String website, @NonNull String phone, @NonNull String email, @NonNull String address, @NonNull Boolean housing, @NonNull Long userId) {
-        this(id, name, description, website, phone, email, address, housing, null, null, null, null, userId);
-    }
 }

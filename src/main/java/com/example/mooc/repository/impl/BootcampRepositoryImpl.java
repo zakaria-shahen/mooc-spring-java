@@ -7,6 +7,7 @@ import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.utils.SQLQueryBuilderUtils;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -17,15 +18,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
+@AllArgsConstructor
 public class BootcampRepositoryImpl implements BootcampRepository {
 
     private final Logger logger = LoggerFactory.getLogger(BootcampRepositoryImpl.class);
     private final JdbcClient jdbcClient;
     private final SQLQueryBuilderUtils bootcampModelSqlUtils = BootcampModel.sqlModuleUtils;
-
-    public BootcampRepositoryImpl(JdbcClient jdbcClient) {
-        this.jdbcClient = jdbcClient;
-    }
 
     @Override
     public BootcampModel create(@NonNull BootcampModel bootcampModel) {
