@@ -3,6 +3,7 @@ package com.example.mooc.repository.impl;
 import com.example.mooc.exception.NotFoundResourceWhileDeletingException;
 import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
 import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
+import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.utils.SQLQueryBuilderUtils;
@@ -32,37 +33,41 @@ public class BootcampRepositoryImpl implements BootcampRepository {
             insert into BOOTCAMP(\{ bootcampModelSqlUtils.parameterNames })
             values(\{ bootcampModelSqlUtils.placeholderParameters })
         """ .trim();
-        logger.info("trying execute insert query against BOOTCAMP for bootcamp name -> {}", bootcampModel.name());
+        logger.info("trying execute insert query against BOOTCAMP for bootcamp name -> {}", bootcampModel.getName());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
-        // TODO
-        var id = jdbcClient.sql(sql)
+        jdbcClient.sql(sql)
                 .param(bootcampModel)
                 .update(keyHolder);
+        var id = keyHolder.getKey();
+        if (id == null) {
+            logger.debug("Fail, unable to get resource ID!, keyHolder value is NULL");
+            throw new SomethingWantWrongWhileFetchingIdException();
+        }
+        bootcampModel.setId(id.longValue());
         return bootcampModel;
     }
-
 
     @Override
     public BootcampModel update(@NonNull BootcampModel bootcampModel) {
         var sql = STR. "update BOOTCAMP SET \{ bootcampModelSqlUtils.fieldsNamesForUpdate } where id = ?" ;
-        logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.id());
+        logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.getId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)
                 .param(bootcampModel)
-                .param(bootcampModel.id())
+                .param(bootcampModel.getName())
                 .update();
         if (affectRows != 1) {
-            logger.error("Fail, while updating BOOTCAMP ID={}, affectRow={}", bootcampModel.id(), affectRows);
+            logger.error("Fail, while updating BOOTCAMP ID={}, affectRow={}", bootcampModel.getId(), affectRows);
             throw new NotFoundResourceWhileUpdatingException();
         }
-        logger.info("1 affect row, BOOTCAMP ID={}", bootcampModel.id());
+        logger.info("1 affect row, BOOTCAMP ID={}", bootcampModel.getId());
         return bootcampModel;
     }
 
     @Override
     public Boolean delete(@NonNull BootcampModel bootcampModel) {
-        return delete(bootcampModel.id());
+        return delete(bootcampModel.getId());
     }
 
     @Override
