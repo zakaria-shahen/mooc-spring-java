@@ -6,6 +6,7 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
+import com.example.mooc.utils.SqlUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,10 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     @Override
     public BootcampModel create(@NonNull BootcampModel bootcampModel) {
         String sql = """
-            insert into BOOTCAMP(name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
-            values(:name, :description, :website, :phone, :email, :address, :housing, :jobAssistance, :jobGuarantee, :averageCost, :averageRating, :userId)
+            insert into BOOTCAMP(#name, #description, #website, #phone, #email, #address, #housing, #job_assistance, #job_guarantee, #average_cost, #average_rating, #user_id)
+            values(@@)
         """.strip();
+        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying execute insert query against BOOTCAMP for bootcamp name -> {}", bootcampModel.getName());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
@@ -51,21 +53,22 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     @Override
     public BootcampModel update(@NonNull BootcampModel bootcampModel) {
         var sql = """
-            update BOOTCAMP SET 
-                name = :name, 
-                description = :description,
-                website = :website,
-                phone = :phone,
-                email = :email,
-                address = :address,
-                housing = :housing,
-                job_assistance = :jobAssistance,
-                job_guarantee = :jobGuarantee,
-                average_cost = :averageCost,
-                average_rating = :averageRating,
-                user_id = :userId 
+            update BOOTCAMP SET
+                #name = @,
+                #description = @,
+                #website = @,
+                #phone = @,
+                #email = @,
+                #address = @,
+                #housing = @,
+                #job_assistance = @,
+                #job_guarantee = @,
+                #average_cost = @,
+                #average_rating = @,
+                #user_id = @
             where id = :id
         """.strip();
+        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.getId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)
@@ -101,8 +104,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     @Override
     public List<BootcampModel> findAll() {
         var sql = """
-        select 
-            id, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id 
+        select
+            id, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
         from BOOTCAMP
         """.strip();
         logger.info("trying to fetch all BOOTCAMP");
@@ -115,7 +118,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     @Override
     public BootcampModel findById(@NonNull Long id) {
         var sql = """
-        select 
+        select
             id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
         from BOOTCAMP where id = ?
         """.strip();
