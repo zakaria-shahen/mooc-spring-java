@@ -1,6 +1,7 @@
 package com.example.mooc.repository.impl;
 
 import com.example.mooc.exception.NotFoundResourceWhileDeletingException;
+import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
 import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
@@ -79,4 +80,33 @@ class BootcampRepositoryImplTest {
         }
 
     }
+
+    @Nested
+    class CreateTests {
+        @Test
+        @DisplayName("when create bootcamp successfully then returns created Bootcamp have id value")
+        void successfully() {
+            var persistenceBootcamp = bootcampRepository.create(bootcampSupplier.get());
+            Assertions.assertThat(persistenceBootcamp.getId()).isNotNull();
+        }
+    }
+
+    @Nested
+    class findTests {
+        @Test
+        @DisplayName("when find by id and ID is exists then returns one bootcamp")
+        void successfully() {
+            var persistenceBootcamp = bootcampRepository.create(bootcampSupplier.get());
+            persistenceBootcamp = bootcampRepository.findById(persistenceBootcamp.getId());
+            Assertions.assertThat(persistenceBootcamp).isNotNull();
+        }
+
+        @Test
+        @DisplayName("failWhenFindByIdNotExists")
+        void failWhenFindByIdNotExists() {
+            Assertions.assertThatExceptionOfType(NotFoundResourceWhileFetchingException.class)
+                    .isThrownBy(() -> bootcampRepository.findById(1000000000L));
+        }
+    }
+
 }
