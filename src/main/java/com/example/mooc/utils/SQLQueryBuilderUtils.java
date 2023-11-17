@@ -1,10 +1,12 @@
 package com.example.mooc.utils;
 
-import java.lang.reflect.Parameter;
+import java.lang.reflect.AccessFlag;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class SQLQueryBuilderUtils {
     public final String fieldsNamesForUpdate;
     public final String parameterNames;
@@ -24,8 +26,10 @@ public class SQLQueryBuilderUtils {
     }
 
     private static List<String> getFieldsNamesWithoutId(Class<?> module) {
-        return Arrays.stream(module.getConstructors()[module.getConstructors().length - 1].getParameters())
-                .map(Parameter::getName).skip(1).toList();
+        return Arrays.stream(module.getDeclaredFields()).filter(it -> !it.accessFlags().contains(AccessFlag.STATIC))
+                .map(Field::getName)
+                .filter(it -> !it.equals("id"))
+                .toList();
     }
 
     private static String placeholderParametersMaker(List<String> fieldsNames) {

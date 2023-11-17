@@ -1,6 +1,6 @@
 package com.example.mooc.model;
 
-import com.example.mooc.utils.SQLQueryBuilderUtils;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
@@ -9,22 +9,21 @@ import java.math.BigDecimal;
 @Getter
 @Setter
 @AllArgsConstructor
-@RequiredArgsConstructor
+@Builder
 @ToString
 public class BootcampModel {
     private Long id;
-    @NonNull private String name;
-    @NonNull private String description;
-    @NonNull private String website;
-    @NonNull private String phone;
-    @NonNull private String email;
-    @NonNull private String address;
-    @NonNull private Boolean housing;
-    private Boolean jobAssistance;
-    private Boolean jobGuarantee;
+    @NotBlank private String name;
+    @NotBlank private String description;
+    @NotBlank private String website;
+    @NotBlank private String phone;
+    @NotBlank private String email;
+    @NotBlank private String address;
+    // @NonNull
+    private boolean housing;
+    private boolean jobAssistance;
+    private boolean jobGuarantee;
     private BigDecimal averageCost;
     private Float averageRating;
     @NonNull private Long userId;
-
-    public static final SQLQueryBuilderUtils sqlModuleUtils = new SQLQueryBuilderUtils(BootcampModel.class);
 }
