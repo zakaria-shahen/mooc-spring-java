@@ -9,7 +9,6 @@ import com.example.mooc.repository.BootcampRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.namedparam.SimplePropertySqlParameterSource;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.lang.NonNull;
@@ -70,7 +69,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
         logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.getId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)
-                .param(bootcampModel)
+                .paramSource(bootcampModel)
                 .update();
         if (affectRows != 1) {
             logger.error("Fail, while updating BOOTCAMP ID={}, affectRow={}", bootcampModel.getId(), affectRows);
@@ -117,7 +116,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public BootcampModel findById(@NonNull Long id) {
         var sql = """
         select 
-            id, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id 
+            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
         from BOOTCAMP where id = ?
         """.strip();
         logger.info("trying to fetch one BOOTCAMP where id = {}", id);
