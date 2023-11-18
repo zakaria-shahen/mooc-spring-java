@@ -41,7 +41,6 @@ public class BootcampRepositoryImpl implements BootcampRepository {
                 .update(keyHolder, "id");
 
         var id = keyHolder.getKey();
-        logger.debug("my Error:  {}", id);
         if (id == null) {
             logger.debug("Fail, unable to get resource ID!, keyHolder value is NULL");
             throw new SomethingWantWrongWhileFetchingIdException();
@@ -105,7 +104,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public List<BootcampModel> findAll() {
         var sql = """
         select
-            id, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
+            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
         from BOOTCAMP
         """.strip();
         logger.info("trying to fetch all BOOTCAMP");
