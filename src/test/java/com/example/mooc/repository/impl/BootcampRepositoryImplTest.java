@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @SpringBootTest
-@Testcontainers
+@Testcontainers(parallel = true)
 @ActiveProfiles("dev")
 class BootcampRepositoryImplTest {
 
@@ -43,7 +43,7 @@ class BootcampRepositoryImplTest {
         @DisplayName("When trying to delete bootcamp doesn't exists Then throw exception")
         void deleteWithNotFoundResourceWhileDeletingException() {
             Assertions.assertThatExceptionOfType(NotFoundResourceWhileDeletingException.class)
-                    .isThrownBy(() -> bootcampRepository.delete(1L));
+                    .isThrownBy(() -> bootcampRepository.delete(1000L));
         }
 
         @Test
@@ -95,7 +95,7 @@ class BootcampRepositoryImplTest {
     class findTests {
         @Test
         @DisplayName("when find by id and ID is exists then returns one bootcamp")
-        void successfully() {
+        void fineByIdSuccessfully() {
             var persistenceBootcamp = bootcampRepository.create(bootcampSupplier.get());
             persistenceBootcamp = bootcampRepository.findById(persistenceBootcamp.getId());
             Assertions.assertThat(persistenceBootcamp).isNotNull();
@@ -106,6 +106,25 @@ class BootcampRepositoryImplTest {
         void failWhenFindByIdNotExists() {
             Assertions.assertThatExceptionOfType(NotFoundResourceWhileFetchingException.class)
                     .isThrownBy(() -> bootcampRepository.findById(1000000000L));
+        }
+
+        @Test
+        @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
+        void findAllSuccessfully() {
+             bootcampRepository.create(bootcampSupplier.get());
+             var bootcampList = bootcampRepository.findAll();
+             Assertions.assertThat(bootcampList)
+                     .hasSizeGreaterThan(0)
+                     .hasAtLeastOneElementOfType(BootcampModel.class);
+        }
+
+        @Test
+        @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
+        void findAllSuccessfullyWithEmptyList() {
+            var bootcampList = bootcampRepository.findAll();
+
+            Assertions.assertThat(bootcampList)
+                    .hasSize(0);
         }
     }
 
