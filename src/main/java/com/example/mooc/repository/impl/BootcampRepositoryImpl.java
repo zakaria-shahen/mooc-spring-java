@@ -129,4 +129,30 @@ public class BootcampRepositoryImpl implements BootcampRepository {
                 .optional()
                 .orElseThrow(NotFoundResourceWhileFetchingException::new);
     }
+
+
+    @Override
+    public Boolean addPhoto(Long bootcampId, String filePath) {
+        var sql = "insert into BOOTCAMP_PHOTO(#bootcamp_id, #photo_path) values (@@)";
+        sql = SqlUtils.addNamedParameters(sql);
+        return jdbcClient.sql(sql)
+                .params(bootcampId)
+                .params(filePath)
+                .update() == 1;
+    }
+
+    @Override
+    public Boolean deletePhoto(Long bootcampId, String filePath) {
+        var sql = "delete from BOOTCAMP_PHOTO where bootcamp_id = ? and photo_path = ?";
+        var affectRows = jdbcClient.sql(sql)
+                .params(bootcampId)
+                .params(filePath)
+                .update();
+        if (affectRows != 1) {
+            logger.debug("Fail, while deleting BOOTCAMP_PHOTO bootcamp_id={}, photo_path={} affectRows={}", bootcampId, filePath, affectRows);
+            throw new NotFoundResourceWhileDeletingException();
+        }
+        logger.info("Successfully deleting BOOTCAMP_PHOTO bootcamp_id={}, photo_path={} affectRows={}", bootcampId, filePath, affectRows);
+        return true;
+    }
 }
