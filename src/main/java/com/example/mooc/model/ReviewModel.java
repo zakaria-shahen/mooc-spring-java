@@ -14,7 +14,6 @@ import lombok.*;
 public class ReviewModel {
     private Long id;
     @NotBlank private String title;
-    @NotNull private Long bootcampId;
     @NotBlank private String text;
     @NotNull @Min(0) @Max(5) Integer rating;
     @NotNull private Long courseId;

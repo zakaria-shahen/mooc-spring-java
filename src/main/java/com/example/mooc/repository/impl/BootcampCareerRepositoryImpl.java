@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
 
     private final JdbcClient jdbcClient;
-    private final Logger logger = LoggerFactory.getLogger(BootcampCareerRepositoryImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Boolean createAll(List<CareerModel> careerModelList, Long bootcampId) {

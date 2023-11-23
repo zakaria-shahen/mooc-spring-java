@@ -2,8 +2,6 @@ package com.example.mooc.repository.impl;
 
 import com.example.mooc.exception.NotFoundResourceWhileDeletingException;
 import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
-import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
-import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.CourseModel;
 import com.example.mooc.repository.CourseRepository;
 import com.example.mooc.utils.SqlUtils;
@@ -34,12 +32,7 @@ public class CourseRepositoryImpl implements CourseRepository {
                 .paramSource(courseModel)
                 .update(keyHolder, "id");
 
-        var id = keyHolder.getKey();
-        if (id == null) {
-            logger.debug("Fail, unable to get resource ID!, keyHolder value is NULL");
-            throw new SomethingWantWrongWhileFetchingIdException();
-        }
-        courseModel.setId(id.longValue());
+        courseModel.setId(SqlUtils.getKeyHolderValue(keyHolder, logger));
         return courseModel;
     }
 
@@ -55,11 +48,7 @@ public class CourseRepositoryImpl implements CourseRepository {
         var affectRows = jdbcClient.sql(sql)
                 .paramSource(courseModel)
                 .update();
-        if (affectRows != 1) {
-            logger.error("Fail, while updating COURSE ID={}, affectRow={}", courseModel.getId(), affectRows);
-            throw new NotFoundResourceWhileUpdatingException();
-        }
-        logger.info("1 affect row, COURSE ID={}", courseModel.getId());
+        SqlUtils.validateAffectRows(affectRows, courseModel.getId(), "COURSE", logger);
         return courseModel;
     }
 
