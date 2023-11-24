@@ -6,11 +6,10 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
-import com.example.mooc.utils.SqlUtils;
+import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
@@ -22,7 +21,7 @@ import java.util.List;
 public class BootcampRepositoryImpl implements BootcampRepository {
 
     private final Logger logger = LoggerFactory.getLogger(BootcampRepositoryImpl.class);
-    private final JdbcClient jdbcClient;
+    private final CustomJdbcClient jdbcClient;
 
     @Override
     public BootcampModel create(@NonNull BootcampModel bootcampModel) {
@@ -30,7 +29,6 @@ public class BootcampRepositoryImpl implements BootcampRepository {
             insert into BOOTCAMP(#name, #description, #website, #phone, #email, #address, #housing, #job_assistance, #job_guarantee, #average_cost, #average_rating, #user_id)
             values(@@)
         """.strip();
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying execute insert query against BOOTCAMP for bootcamp name -> {}", bootcampModel.getName());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
@@ -67,7 +65,6 @@ public class BootcampRepositoryImpl implements BootcampRepository {
                 #user_id = @
             where id = :id
         """.strip();
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.getId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)
@@ -134,7 +131,6 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     @Override
     public Boolean addPhoto(Long bootcampId, String filePath) {
         var sql = "insert into BOOTCAMP_PHOTO(#bootcamp_id, #photo_path) values (@@)";
-        sql = SqlUtils.addNamedParameters(sql);
         return jdbcClient.sql(sql)
                 .params(bootcampId)
                 .params(filePath)

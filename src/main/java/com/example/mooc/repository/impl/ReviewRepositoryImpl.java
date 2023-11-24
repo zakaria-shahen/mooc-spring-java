@@ -24,7 +24,6 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     @Override
     public ReviewModel create(ReviewModel reviewModel) {
         var sql = "insert into REVIEW(#id, #title, #text, #rating, #course_id, #user_id) values(@@)";
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying execute insert query against REVIEW for review title -> {}", reviewModel.getTitle());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
@@ -42,7 +41,6 @@ public class ReviewRepositoryImpl implements ReviewRepository {
                 update REVIEW set #title = @, #text = @, #rating = @
                 where #id = @ and #course_id = @ and #user_id = @
                 """.strip();
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying updating query against REVIEW for review id -> {}, title -> {}, user id -> {}", reviewModel.getId(), reviewModel.getTitle(), reviewModel.getUserId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)

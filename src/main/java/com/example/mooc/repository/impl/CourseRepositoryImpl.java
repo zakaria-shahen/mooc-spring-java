@@ -24,7 +24,6 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public CourseModel create(CourseModel courseModel) {
         var sql = "insert into COURSE(#title, #description, #weeks, #tuition, #minimum_skill) values(@@)";
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying execute insert query against COURSE for course title -> {}", courseModel.getTitle());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
@@ -42,7 +41,6 @@ public class CourseRepositoryImpl implements CourseRepository {
                     update BOOTCAMP SET #title = @, #description = @, #weeks = @, #tuition = @, #minimum_skill = @
                     where #id = @ and user_id = @
                 """.strip();
-        sql = SqlUtils.addNamedParameters(sql);
         logger.info("trying updating query against COURSE for Course id -> {}, user id -> {}", courseModel.getId(), courseModel.getUserId());
         logger.debug("execute update query: {}", sql);
         var affectRows = jdbcClient.sql(sql)

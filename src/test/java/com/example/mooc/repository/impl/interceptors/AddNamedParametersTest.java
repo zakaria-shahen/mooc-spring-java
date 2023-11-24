@@ -1,24 +1,26 @@
-package com.example.mooc.utils;
+package com.example.mooc.repository.impl.interceptors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class SqlUtilsTest {
+class AddNamedParametersTest {
+
+    private final AddNamedParameters unitUnderTest = new AddNamedParameters();
 
     @Test
-    void addNamedParameters() {
+    void  first() {
         String sql = """
                     insert into BOOTCAMP(#name, #description, #website, #phone, #email, #address, #housing, #job_assistance, #job_guarantee, #average_cost, #average_rating, user_id)
                     values(@@)
                 """.strip();
-        Assertions.assertThat(SqlUtils.addNamedParameters(sql))
+        Assertions.assertThat(unitUnderTest.intercept(sql))
                 .isEqualTo("""
                         insert into BOOTCAMP(name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
                             values(:name, :description, :website, :phone, :email, :address, :housing, :jobAssistance, :jobGuarantee, :averageCost, :averageRating)
                         """.strip());
 
         sql = """
-                            update BOOTCAMP SET 
+                            update BOOTCAMP SET
                     #name = @,
                     #description = @,
                     #website = @,
@@ -32,7 +34,7 @@ class SqlUtilsTest {
                     #average_rating = @,
                     #user_id = @
                 where id = :id""".strip();
-        Assertions.assertThat(SqlUtils.addNamedParameters(sql))
+        Assertions.assertThat(unitUnderTest.intercept(sql))
                 .isEqualTo("""
                         update BOOTCAMP SET
                             name = :name,

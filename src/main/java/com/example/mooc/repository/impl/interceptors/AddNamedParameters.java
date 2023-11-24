@@ -1,6 +1,6 @@
-package com.example.mooc.repository.impl.Interceptors;
+package com.example.mooc.repository.impl.interceptors;
 
-import com.example.mooc.repository.impl.Interceptors.specification.JdbcClientSqlInterceptor;
+import com.example.mooc.repository.impl.interceptors.specification.JdbcClientSqlInterceptor;
 import org.springframework.jdbc.support.JdbcUtils;
 
 import java.util.regex.Pattern;

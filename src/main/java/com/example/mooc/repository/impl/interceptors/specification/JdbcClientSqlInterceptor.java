@@ -1,4 +1,4 @@
-package com.example.mooc.repository.impl.Interceptors.specification;
+package com.example.mooc.repository.impl.interceptors.specification;
 
 @FunctionalInterface
 public interface JdbcClientSqlInterceptor {

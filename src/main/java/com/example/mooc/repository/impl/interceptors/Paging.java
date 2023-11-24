@@ -1,4 +1,4 @@
-package com.example.mooc.repository.impl.Interceptors;
+package com.example.mooc.repository.impl.interceptors;
 
 import org.springframework.data.domain.Pageable;
 

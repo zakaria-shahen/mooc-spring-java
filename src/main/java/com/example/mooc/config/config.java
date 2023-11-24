@@ -1,8 +1,8 @@
 package com.example.mooc.config;
 
-import com.example.mooc.repository.impl.Interceptors.AddNamedParameters;
-import com.example.mooc.repository.impl.Interceptors.Paging;
-import com.example.mooc.repository.impl.Interceptors.specification.CustomJdbcClient;
+import com.example.mooc.repository.impl.interceptors.AddNamedParameters;
+import com.example.mooc.repository.impl.interceptors.Paging;
+import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
