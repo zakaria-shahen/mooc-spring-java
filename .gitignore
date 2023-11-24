@@ -1,3 +1,5 @@
+/src/main/resources/schema/V1__init.sql
+
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
