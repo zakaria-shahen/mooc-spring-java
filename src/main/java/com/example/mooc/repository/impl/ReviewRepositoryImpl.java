@@ -4,11 +4,12 @@ import com.example.mooc.exception.NotFoundResourceWhileDeletingException;
 import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
 import com.example.mooc.model.ReviewModel;
 import com.example.mooc.repository.ReviewRepository;
+import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import com.example.mooc.utils.SqlUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
@@ -18,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepository {
 
-    private final JdbcClient jdbcClient;
+    private final CustomJdbcClient jdbcClient;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
@@ -84,13 +85,13 @@ public class ReviewRepositoryImpl implements ReviewRepository {
     }
 
     @Override
-    public List<ReviewModel> findAllByCourseId(Long courseId) {
+    public List<ReviewModel> findAllByCourseId(Long courseId, Pageable pageable) {
         var sql = """
                select id, title, text, rating, course_id, user_id
                from REVIEW
                where course_id = ?
                """.strip();
-        return jdbcClient.sql(sql)
+        return jdbcClient.sql(sql, pageable)
                 .param(courseId)
                 .query(ReviewModel.class)
                 .list();

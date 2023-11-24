@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -112,7 +113,7 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
         void findAllSuccessfully() {
              bootcampRepository.create(bootcampSupplier.get());
-             var bootcampList = bootcampRepository.findAll();
+             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10));
              Assertions.assertThat(bootcampList)
                      .hasSizeGreaterThan(0)
                      .hasAtLeastOneElementOfType(BootcampModel.class);
@@ -121,7 +122,7 @@ class BootcampRepositoryImplTest {
         @Test
         @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
         void findAllSuccessfullyWithEmptyList() {
-            var bootcampList = bootcampRepository.findAll();
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10));
 
             Assertions.assertThat(bootcampList)
                     .hasSize(0);

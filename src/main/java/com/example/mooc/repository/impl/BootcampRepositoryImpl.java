@@ -10,6 +10,7 @@ import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcCli
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
@@ -98,7 +99,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public List<BootcampModel> findAll() {
+    public List<BootcampModel> findAll(Pageable pageable) {
         var sql = """
         select
             id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
@@ -106,7 +107,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
         """.strip();
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
-        return jdbcClient.sql(sql)
+        return jdbcClient.sql(sql, pageable)
                 .query(BootcampModel.class)
                 .list();
     }

@@ -2,6 +2,7 @@ package com.example.mooc.repository;
 
 import com.example.mooc.model.ReviewModel;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface ReviewRepository {
 
     ReviewModel findById(@NotNull Long id);
 
-    List<ReviewModel> findAllByCourseId(@NotNull Long courseId);
+    List<ReviewModel> findAllByCourseId(@NotNull Long courseId, Pageable pageable);
 }

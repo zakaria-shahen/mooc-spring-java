@@ -4,10 +4,12 @@ import com.example.mooc.exception.NotFoundResourceWhileDeletingException;
 import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
 import com.example.mooc.model.CourseModel;
 import com.example.mooc.repository.CourseRepository;
+import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import com.example.mooc.utils.SqlUtils;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
@@ -19,7 +21,7 @@ import java.util.List;
 public class CourseRepositoryImpl implements CourseRepository {
 
     private final Logger logger = LoggerFactory.getLogger(CourseRepositoryImpl.class);
-    private final JdbcClient jdbcClient;
+    private final CustomJdbcClient jdbcClient;
 
     @Override
     public CourseModel create(CourseModel courseModel) {
@@ -71,11 +73,11 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public List<CourseModel> findAllByBootcampId(Long bootcampId) {
+    public List<CourseModel> findAllByBootcampId(Long bootcampId, Pageable pageable) {
         var sql = "select title, description, weeks, tuition, minimum_skill from COURSE  where bootcamp_id = ?";
         logger.info("trying to fetch all COURSE");
         logger.debug("execute select query: {}", sql);
-        return jdbcClient.sql(sql)
+        return jdbcClient.sql(sql, pageable)
                 .params(bootcampId)
                 .query(CourseModel.class)
                 .list();
