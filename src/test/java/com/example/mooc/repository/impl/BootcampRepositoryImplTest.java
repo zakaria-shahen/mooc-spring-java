@@ -16,6 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @SpringBootTest
@@ -113,7 +114,7 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
         void findAllSuccessfully() {
              bootcampRepository.create(bootcampSupplier.get());
-             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10));
+             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), Map.of());
              Assertions.assertThat(bootcampList)
                      .hasSizeGreaterThan(0)
                      .hasAtLeastOneElementOfType(BootcampModel.class);
@@ -122,7 +123,8 @@ class BootcampRepositoryImplTest {
         @Test
         @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
         void findAllSuccessfullyWithEmptyList() {
-            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10));
+            bootcampRepository.create(bootcampSupplier.get());
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), Map.of("name", "omar"));
 
             Assertions.assertThat(bootcampList)
                     .hasSize(0);

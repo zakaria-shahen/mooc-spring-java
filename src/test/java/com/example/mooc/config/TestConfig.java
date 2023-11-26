@@ -13,7 +13,9 @@ public class TestConfig {
     public OracleContainer oracleContainer() {
         return new OracleContainer("gvenzl/oracle-xe:21-slim-faststart")
                 // .withReuse(true)
-                .withStartupTimeoutSeconds(200);
+                .withStartupTimeoutSeconds(150);
     }
+
+
 
 }
