@@ -1,6 +1,7 @@
 package com.example.mooc.config;
 
 import com.example.mooc.repository.impl.interceptors.AddNamedParameters;
+import com.example.mooc.repository.impl.interceptors.FilterResult;
 import com.example.mooc.repository.impl.interceptors.Paging;
 import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +14,8 @@ public class config {
     @Bean
     CustomJdbcClient customJdbcClient(JdbcTemplate jdbcTemplate) {
          return new CustomJdbcClient(jdbcTemplate, Paging::interceptor)
-                 .addInterceptor(new AddNamedParameters());
+                 .addInterceptor(new AddNamedParameters())
+                 .addInterceptor(new FilterResult());
     }
 
 
