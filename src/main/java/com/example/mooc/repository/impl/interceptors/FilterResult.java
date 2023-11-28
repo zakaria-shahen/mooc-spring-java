@@ -37,6 +37,7 @@ public class FilterResult implements JdbcClientSqlInterceptor {
         return where;
     }
 
+    @Deprecated
     public static List<String> parserFilterParameters(Map<String, String> by) {
         var filtersValues = new ArrayList<String>();
         by.forEach((key, value) ->  {
