@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Builder
 @ToString
 public class CourseModel {
+
     private Long id;
     @NotBlank private String title;
     @NotBlank private String description;
@@ -21,4 +22,15 @@ public class CourseModel {
     @NotNull private MinimumSkill minimumSkill;
     @NotNull private Long bootcampId;
     @NotNull private Long userId;
+
+
+    @AllArgsConstructor
+    public enum MinimumSkill {
+        BEGINNER("beginner"),
+        INTERMEDIATE("intermediate"),
+        ADVANCED("advanced");
+
+        private final String name;
+
+    }
 }
