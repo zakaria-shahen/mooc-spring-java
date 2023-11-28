@@ -1,4 +1,4 @@
-package com.example.mooc.repository.impl.interceptors.specification;
+package com.example.mooc.repository.impl.interceptors;
 
 import java.util.List;
 

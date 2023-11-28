@@ -1,6 +1,5 @@
-package com.example.mooc.config;
+package com.example.mooc.repository.impl.interceptors;
 
-import com.example.mooc.repository.impl.interceptors.specification.FilterBy;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +16,7 @@ public class FiltersConverter implements Converter<String, FilterBy> {
     @Override
     public FilterBy convert(String source) {
         List<String> asParams = convertToList(source);
-        int size = asParams.isEmpty()? 0 : asParams.size() / 2;
+        int size = asParams.isEmpty() ? 0 : asParams.size() / 2;
         return new FilterBy(size, asParams);
     }
 

@@ -1,12 +1,11 @@
 package com.example.mooc.repository;
 
 import com.example.mooc.model.BootcampModel;
-import com.example.mooc.repository.impl.interceptors.specification.FilterBy;
+import com.example.mooc.repository.impl.interceptors.FilterBy;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 public interface BootcampRepository {
 
