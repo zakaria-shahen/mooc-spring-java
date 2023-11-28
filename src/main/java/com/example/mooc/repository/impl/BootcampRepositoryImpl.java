@@ -6,8 +6,8 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
-import com.example.mooc.repository.impl.interceptors.FilterResult;
 import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
+import com.example.mooc.repository.impl.interceptors.specification.FilterBy;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,6 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 @Repository
 @AllArgsConstructor
@@ -101,17 +100,17 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public List<BootcampModel> findAll(Pageable pageable, Map<String, String> filters) {
+    public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy) {
         var sql = STR."""
         select
             id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
-        from BOOTCAMP !filter(\{filters.size()})
+        from BOOTCAMP !filter(\{filterBy.size()})
         """.strip();
 
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
         return jdbcClient.sql(sql, pageable)
-                .params(FilterResult.parserFilterParameters(filters))
+                .params(filterBy.asParams())
                 .query(BootcampModel.class)
                 .list();
     }

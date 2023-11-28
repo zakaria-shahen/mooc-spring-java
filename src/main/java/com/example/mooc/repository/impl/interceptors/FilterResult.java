@@ -31,7 +31,7 @@ public class FilterResult implements JdbcClientSqlInterceptor {
 
         final int DELETE_LAST_OPERATOR = 5;
         var where = STR."""
-                  where \{"? = ? and".repeat(size)}
+                  where \{" ? = ? and".repeat(size)}
                 """;
         where = where.substring(0, where.length() - DELETE_LAST_OPERATOR);
         return where;
