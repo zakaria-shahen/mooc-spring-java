@@ -7,9 +7,7 @@ import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
@@ -129,6 +127,33 @@ class BootcampRepositoryImplTest {
             Assertions.assertThat(bootcampList)
                     .hasSize(0);
         }
+    }
+
+    @Nested
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class Photo {
+        private final String PHOTO_PATH = "photo";
+        private Long bootcampId;
+
+        @BeforeAll
+        void init()  {
+             bootcampId = bootcampRepository.create(bootcampSupplier.get()).getId();
+        }
+
+        @Test
+        @DisplayName("when trying to add photo to bootcamp then returns true")
+        void create() {
+             var status = bootcampRepository.addPhoto(bootcampId, PHOTO_PATH);
+             Assertions.assertThat(status).isTrue();
+        }
+
+        @Test
+        @DisplayName("when trying to delete photo from bootcamp then returns true")
+        void delete() {
+            var status = bootcampRepository.deletePhoto(bootcampId, PHOTO_PATH);
+            Assertions.assertThat(status).isTrue();
+        }
+
     }
 
 }
