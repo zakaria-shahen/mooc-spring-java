@@ -136,8 +136,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public Boolean addPhoto(Long bootcampId, String filePath) {
         var sql = "insert into BOOTCAMP_PHOTO(#bootcamp_id, #photo_path) values (@@)";
         return jdbcClient.sql(sql)
-                .params(bootcampId)
-                .params(filePath)
+                .param(bootcampId)
+                .param(filePath)
                 .update() == 1;
     }
 
@@ -145,8 +145,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public Boolean deletePhoto(Long bootcampId, String filePath) {
         var sql = "delete from BOOTCAMP_PHOTO where bootcamp_id = ? and photo_path = ?";
         var affectRows = jdbcClient.sql(sql)
-                .params(bootcampId)
-                .params(filePath)
+                .param(bootcampId)
+                .param(filePath)
                 .update();
         if (affectRows != 1) {
             logger.debug("Fail, while deleting BOOTCAMP_PHOTO bootcamp_id={}, photo_path={} affectRows={}", bootcampId, filePath, affectRows);

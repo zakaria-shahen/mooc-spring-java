@@ -21,34 +21,42 @@ public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
     @Override
     public Boolean createAll(List<CareerModel> careerModelList, Long bootcampId) {
         var sql = STR."""
-            DEFINE bootcamp_id_value = ?;
+             declare
+                bootcamp_id_value number;
+             begin
+                select ? into bootcamp_id_value from dual;
                 \{careerModelList.stream().map(it ->
-                    "insert into BOOTCAMP_CAREER(bootcamp_id, career_id) values(?, bootcamp_id_value);"
+                        "insert into BOOTCAMP_CAREER(bootcamp_id, career_id) values(bootcamp_id_value, ?);"
                     ).collect(Collectors.joining())
-                }""".strip();
+                }
+             end;""".strip();
         var careerIds = careerModelList.stream().map(CareerModel::getId).toList();
 
         logger.info("trying to add careerList with size = {} to bootcamp id = {}", careerModelList.size(), bootcampId);
         return jdbcClient.sql(sql)
                 .param(bootcampId)
                 .params(careerIds)
-                .update() == careerIds.size();
+                .update() == 1;
     }
 
     @Override
     public Boolean deleteAll(List<CareerModel> careerModelList, Long bootcampId) {
         var sql = STR."""
-            DEFINE bootcamp_id_value = ?;
-            \{careerModelList.stream().map(it ->
-                "delete from BOOTCAMP_CAREER where bootcamp_id = bootcamp_id_value and career_id = ?"
-            ).collect(Collectors.joining())}""".strip();
+             declare
+                bootcamp_id_value number;
+             begin
+                select ? into bootcamp_id_value from dual;
+                \{careerModelList.stream().map(it ->
+                        "delete from BOOTCAMP_CAREER where bootcamp_id = bootcamp_id_value and career_id = ?;"
+                ).collect(Collectors.joining())}
+            end;""".strip();
         var careerIds = careerModelList.stream().map(CareerModel::getId).toList();
 
         logger.info("trying to delete careerList with size = {} from bootcamp id = {}", careerModelList.size(), bootcampId);
         return jdbcClient.sql(sql)
                 .param(bootcampId)
                 .params(careerIds)
-                .update() == careerIds.size();
+                .update() == 1;
     }
 
     @Override

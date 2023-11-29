@@ -9,7 +9,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@Profile("!pod")
+@Profile("!prod")
 public class SecurityConfig {
 
     @Bean
