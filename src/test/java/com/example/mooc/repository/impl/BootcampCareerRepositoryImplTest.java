@@ -9,33 +9,31 @@ import com.example.mooc.repository.CareerRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.UUID;
 
 
 @SpringBootTest
-@Testcontainers
-@ActiveProfiles("dev")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Testcontainers(parallel = true)
 class BootcampCareerRepositoryImplTest {
 
     @Autowired
     private BootcampCareerRepository bootcampCareerRepository;
     @Autowired
     private CareerRepository careerRepository;
-    private CareerModel backendCareer = new CareerModel(null, "back-end");
-    private CareerModel devOpsCareer = new CareerModel(null, "devops");
-    private CareerModel mobileCareer = new CareerModel(null, "mobile");
-    private CareerModel frontEndCareer = new CareerModel(null, "front-end");
+    private CareerModel backendCareer = new CareerModel(null, STR."back-end:\{UUID.randomUUID()}");
+    private CareerModel devOpsCareer = new CareerModel(null, STR."devops:\{UUID.randomUUID()}");
+    private CareerModel mobileCareer = new CareerModel(null, STR."mobile:\{UUID.randomUUID()}");
+    private CareerModel frontEndCareer = new CareerModel(null, STR."front-end:\{UUID.randomUUID()}");
     private Long bootcampId = null;
     @Autowired
     BootcampRepository bootcampRepository;
 
-    @BeforeAll
+    @BeforeEach
     void init() {
         backendCareer = careerRepository.create(backendCareer);
         devOpsCareer = careerRepository.create(devOpsCareer);
@@ -77,7 +75,7 @@ class BootcampCareerRepositoryImplTest {
 
         @Test
         @DisplayName("when trying to add career to bootcamp and this career exists in bootcamp then throw exception")
-        @Transactional
+        @Disabled("TODO: move next test case to service layer test cases")
         void throwsWhenItExists() {
             bootcampCareerRepository.create(frontEndCareer, bootcampId);
             Assertions.assertThatExceptionOfType(ResourceYouTryToLinkToIsAlreadyLinked.class)

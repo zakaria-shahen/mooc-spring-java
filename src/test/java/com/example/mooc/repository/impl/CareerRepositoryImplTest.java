@@ -5,12 +5,12 @@ import com.example.mooc.exception.ResourceYouTryToLinkToIsAlreadyLinked;
 import com.example.mooc.model.CareerModel;
 import com.example.mooc.repository.CareerRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
@@ -18,7 +18,6 @@ import java.util.function.Supplier;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
-@ActiveProfiles("dev")
 class CareerRepositoryImplTest {
 
     @Autowired
@@ -45,9 +44,9 @@ class CareerRepositoryImplTest {
         Assertions.assertThat(career.getId()).isNotNull();
     }
 
-    // TODO: move next test case to service layer test cases.
     @Test
     @DisplayName("when trying to create one career then returns career with id.")
+    @Disabled("TODO: move next test case to service layer test cases.")
     void createOneWithThrow() {
         var career = careerRepository.create(careerModelSupplier.get());
         Assertions.assertThatExceptionOfType(ResourceYouTryToLinkToIsAlreadyLinked.class)

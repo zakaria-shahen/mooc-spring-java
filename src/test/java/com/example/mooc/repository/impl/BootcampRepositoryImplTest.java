@@ -7,11 +7,13 @@ import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
@@ -19,7 +21,6 @@ import java.util.function.Supplier;
 
 @SpringBootTest
 @Testcontainers(parallel = true)
-@ActiveProfiles("dev")
 class BootcampRepositoryImplTest {
 
     @Autowired
@@ -133,12 +134,7 @@ class BootcampRepositoryImplTest {
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class Photo {
         private final String PHOTO_PATH = "photo";
-        private Long bootcampId;
-
-        @BeforeAll
-        void init()  {
-             bootcampId = bootcampRepository.create(bootcampSupplier.get()).getId();
-        }
+        private final Long bootcampId = bootcampRepository.create(bootcampSupplier.get()).getId();
 
         @Test
         @DisplayName("when trying to add photo to bootcamp then returns true")
