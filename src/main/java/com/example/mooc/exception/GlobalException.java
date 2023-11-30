@@ -3,6 +3,7 @@ package com.example.mooc.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,8 +20,8 @@ public class GlobalException {
     }
 
     @ExceptionHandler(DuplicateKeyException.class)
-    public Boolean DuplicateKeyExceptionHandler() {
-        throw new ResourceYouTryToLinkToIsAlreadyLinked();
+    public ErrorResponse DuplicateKeyExceptionHandler() {
+        return new ResourceYouTryToLinkToIsAlreadyLinked();
     }
 
 }
