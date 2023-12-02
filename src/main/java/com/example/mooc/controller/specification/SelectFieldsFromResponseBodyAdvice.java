@@ -1,6 +1,7 @@
 package com.example.mooc.controller.specification;
 
 import com.example.mooc.exception.SelectFieldNameNotExists;
+import com.example.mooc.repository.impl.interceptors.Select;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ControllerAdvice
@@ -33,7 +31,16 @@ public class SelectFieldsFromResponseBodyAdvice implements ResponseBodyAdvice<Ob
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
         return supportCache.computeIfAbsent(returnType.getMethod(),
-                _ -> returnType.hasMethodAnnotation(SelectFieldsSupport.class) || returnTypeClassHasSelectDataAnnotation(returnType));
+                _ -> {
+                    var parameterTypes = returnType.getMethod().getParameterTypes();
+                    for (Class<?> aClass : parameterTypes) {
+                        if (aClass.isAssignableFrom(Select.class)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+        // _ -> returnType.hasMethodAnnotation(SelectFieldsSupport.class) || returnTypeClassHasSelectDataAnnotation(returnType));
     }
 
     private boolean returnTypeClassHasSelectDataAnnotation(MethodParameter returnType) {
@@ -58,10 +65,12 @@ public class SelectFieldsFromResponseBodyAdvice implements ResponseBodyAdvice<Ob
         }
 
         if (Collection.class.isAssignableFrom(body.getClass())) {
-            List<Map<String, Object>> bodyAsMap = objectMapper.convertValue(body, new TypeReference<>() {});
+            List<Map<String, Object>> bodyAsMap = objectMapper.convertValue(body, new TypeReference<>() {
+            });
             return bodyAsMap.stream().map(it -> selectFields(it, listOfFiled)).toList();
         } else {
-            Map<String, Object> bodyAsMap = objectMapper.convertValue(body, new TypeReference<>() {});
+            Map<String, Object> bodyAsMap = objectMapper.convertValue(body, new TypeReference<>() {
+            });
             return selectFields(bodyAsMap, listOfFiled);
         }
 

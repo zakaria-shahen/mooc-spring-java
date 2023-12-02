@@ -14,6 +14,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain endpointsSecurity(HttpSecurity httpSecurity) throws Exception {
+        // EJWT have user id, user name, rule(user, admin)
         return httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry.anyRequest().permitAll()
         ).build();
