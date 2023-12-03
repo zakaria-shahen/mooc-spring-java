@@ -6,7 +6,9 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
+import com.example.mooc.repository.impl.interceptors.CustomSimplePropertyRowMapper;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
+import com.example.mooc.repository.impl.interceptors.Select;
 import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -100,19 +102,20 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy) {
+    public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy, Select select) {
         var sql = STR."""
         select
-            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
+            !selectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
         from BOOTCAMP !filter(\{filterBy.size()})
         """.strip();
 
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
         return jdbcClient.pageable(pageable)
+                .selectFields(select)
                 .sql(sql)
                 .params(filterBy.asParams())
-                .query(BootcampModel.class)
+                .query(new CustomSimplePropertyRowMapper<>(BootcampModel.class))
                 .list();
     }
 
@@ -120,7 +123,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public BootcampModel findById(@NonNull Long id) {
         var sql = """
         select
-            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
+            !selectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
         from BOOTCAMP where id = ?
         """.strip();
         logger.info("trying to fetch one BOOTCAMP where id = {}", id);
