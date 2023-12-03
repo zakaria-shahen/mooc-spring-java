@@ -22,8 +22,8 @@ public class CareerRepositoryImpl implements CareerRepository {
 
     public List<CareerModel> findAll(Pageable pageable) {
         logger.info("fetch all career");
-        return jdbcClient
-                .sql("select id, name from CAREER", pageable)
+        return jdbcClient.pageable(pageable)
+                .sql("select id, name from CAREER")
                 .query(CareerModel.class)
                 .list();
     }
