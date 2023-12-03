@@ -77,7 +77,8 @@ public class CourseRepositoryImpl implements CourseRepository {
         var sql = "select title, description, weeks, tuition, minimum_skill from COURSE  where bootcamp_id = ?";
         logger.info("trying to fetch all COURSE");
         logger.debug("execute select query: {}", sql);
-        return jdbcClient.sql(sql, pageable)
+        return jdbcClient.pageable(pageable)
+                .sql(sql)
                 .params(bootcampId)
                 .query(CourseModel.class)
                 .list();

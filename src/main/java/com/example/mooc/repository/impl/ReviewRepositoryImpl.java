@@ -91,7 +91,8 @@ public class ReviewRepositoryImpl implements ReviewRepository {
                from REVIEW
                where course_id = ?
                """.strip();
-        return jdbcClient.sql(sql, pageable)
+        return jdbcClient.pageable(pageable)
+                .sql(sql)
                 .param(courseId)
                 .query(ReviewModel.class)
                 .list();

@@ -4,7 +4,6 @@ import com.example.mooc.repository.impl.interceptors.Paging;
 import com.example.mooc.repository.impl.interceptors.Select;
 import com.example.mooc.repository.impl.interceptors.SelectFields;
 import jakarta.annotation.Nonnull;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -47,12 +46,6 @@ public class CustomJdbcClient implements JdbcClient {
         selectFields = null;
 
         return jdbcClient.sql(finalSql);
-    }
-
-    @Deprecated
-    public StatementSpec sql(@NotNull String sql, Pageable pageable) {
-        String finalSql = parserSqlCache.computeIfAbsent(sql, this::applyInterceptor);
-        return jdbcClient.sql(pagingParserInterceptor.intercept(finalSql, pageable));
     }
 
     public CustomJdbcClient pageable(Pageable pageable) {

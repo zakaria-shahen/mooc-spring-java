@@ -109,7 +109,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
 
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
-        return jdbcClient.sql(sql, pageable)
+        return jdbcClient.pageable(pageable)
+                .sql(sql)
                 .params(filterBy.asParams())
                 .query(BootcampModel.class)
                 .list();
