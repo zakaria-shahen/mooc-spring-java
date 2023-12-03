@@ -1,6 +1,7 @@
 package com.example.mooc.controller.specification;
 
 import com.example.mooc.exception.SelectFieldNameNotExists;
+import com.example.mooc.repository.impl.interceptors.Select;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,10 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ControllerAdvice
@@ -32,22 +30,23 @@ public class SelectFieldsFromResponseBodyAdvice implements ResponseBodyAdvice<Ob
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return supportCache.computeIfAbsent(returnType.getMethod(),
-                _ -> returnType.hasMethodAnnotation(SelectFieldsSupport.class) || returnTypeClassHasSelectDataAnnotation(returnType));
+        return supportCache.computeIfAbsent(returnType.getMethod(), _ -> methodHasSelectAsParameter(returnType));
     }
 
-    private boolean returnTypeClassHasSelectDataAnnotation(MethodParameter returnType) {
-        var type = ResolvableType.forMethodParameter(returnType).resolveGeneric(0);
-        if (type == null) {
-            type = returnType.getParameterType();
+    private boolean methodHasSelectAsParameter(MethodParameter returnType) {
+        var parameterTypes = returnType.getMethod().getParameterTypes();
+        for (Class<?> aClass : parameterTypes) {
+            if (aClass.isAssignableFrom(Select.class)) {
+                return true;
+            }
         }
-        return type.isAnnotationPresent(SelectFieldsSupport.class);
+        return false;
     }
 
     @Override
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
         var selectParameter = httpServletRequest.getParameter("select");
-        if (selectParameter == null) {
+        if (selectParameter == null || selectParameter.isBlank()) {
             return body;
         }
 
