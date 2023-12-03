@@ -2,6 +2,7 @@ package com.example.mooc.repository;
 
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
+import com.example.mooc.repository.impl.interceptors.Select;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Pageable;
 
@@ -17,7 +18,7 @@ public interface BootcampRepository {
 
     Boolean delete(Long id);
 
-    List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy);
+    List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy, Select select);
 
     BootcampModel findById(Long id);
 

@@ -6,6 +6,7 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
+import com.example.mooc.repository.impl.interceptors.Select;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -113,17 +114,28 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
         void findAllSuccessfully() {
              bootcampRepository.create(bootcampSupplier.get());
-             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()));
+             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()), null);
              Assertions.assertThat(bootcampList)
                      .hasSizeGreaterThan(0)
                      .hasAtLeastOneElementOfType(BootcampModel.class);
         }
 
         @Test
+        @DisplayName("when trying to find all bootcamp and select columns then returns list of bootcamp")
+        void findAllSuccessfullyWithSelectColumns() {
+            bootcampRepository.create(bootcampSupplier.get());
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()), new Select("id"));
+            Assertions.assertThat(bootcampList)
+                    .hasSizeGreaterThan(0)
+                    .hasAtLeastOneElementOfType(BootcampModel.class);
+            Assertions.assertThat(bootcampList.getFirst().getId()).isNotNull();
+        }
+
+        @Test
         @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
         void findAllSuccessfullyWithEmptyList() {
             bootcampRepository.create(bootcampSupplier.get());
-            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(1, List.of("name", "omar")));
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(1, List.of("name", "omar")), null);
 
             Assertions.assertThat(bootcampList)
                     .hasSize(0);
