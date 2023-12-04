@@ -6,7 +6,6 @@ import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.exception.SomethingWantWrongWhileFetchingIdException;
 import com.example.mooc.model.BootcampModel;
 import com.example.mooc.repository.BootcampRepository;
-import com.example.mooc.repository.impl.interceptors.CustomSimplePropertyRowMapper;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
 import com.example.mooc.repository.impl.interceptors.Select;
 import com.example.mooc.repository.impl.interceptors.specification.CustomJdbcClient;
@@ -14,11 +13,13 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @AllArgsConstructor
@@ -102,7 +103,24 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy, Select select) {
+    public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy) {
+        var sql = STR."""
+        select
+            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
+        from BOOTCAMP !filter(\{filterBy.size()})
+        """.strip();
+
+        logger.info("trying to fetch all BOOTCAMP");
+        logger.debug("execute select query: {}", sql);
+        return jdbcClient.pageable(pageable)
+                .sql(sql)
+                .params(filterBy.asParams())
+                .query(BootcampModel.class)
+                .list();
+    }
+
+    @Override
+    public List<Map<String, Object>> findAll(Pageable pageable, FilterBy filterBy, Select select) {
         var sql = STR."""
         select
             !selectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
@@ -115,7 +133,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
                 .selectFields(select)
                 .sql(sql)
                 .params(filterBy.asParams())
-                .query(new CustomSimplePropertyRowMapper<>(BootcampModel.class))
+                .query(new ColumnMapRowMapper())
                 .list();
     }
 

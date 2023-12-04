@@ -1,6 +1,8 @@
 package com.example.mooc.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 
@@ -11,16 +13,17 @@ import java.math.BigDecimal;
 @ToString
 public class BootcampModel {
     private Long id;
-    private String name;
-    private String description;
-    private String website;
-    private String phone;
-    private String email;
-    private String address;
+    @NotBlank private String name;
+    @NotBlank private String description;
+    @NotBlank private String website;
+    @NotBlank private String phone;
+    @NotBlank private String email;
+    @NotBlank private String address;
+    // @NonNull
     private boolean housing;
     private boolean jobAssistance;
     private boolean jobGuarantee;
     private BigDecimal averageCost;
     private Float averageRating;
-    private Long userId;
+    @NonNull private Long userId;
 }
