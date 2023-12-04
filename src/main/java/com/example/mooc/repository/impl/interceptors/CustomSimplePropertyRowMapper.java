@@ -76,6 +76,7 @@ import org.springframework.util.ReflectionUtils;
  * @see org.springframework.jdbc.core.simple.JdbcClient.StatementSpec#query(Class)
  * @see org.springframework.jdbc.core.namedparam.SimplePropertySqlParameterSource
  */
+@Deprecated
 public class CustomSimplePropertyRowMapper<T> implements RowMapper<T> {
 
     private static final Object NO_DESCRIPTOR = new Object();

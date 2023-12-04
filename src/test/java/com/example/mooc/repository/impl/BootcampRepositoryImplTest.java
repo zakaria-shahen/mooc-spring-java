@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @SpringBootTest
@@ -114,7 +115,7 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
         void findAllSuccessfully() {
              bootcampRepository.create(bootcampSupplier.get());
-             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()), null);
+             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()));
              Assertions.assertThat(bootcampList)
                      .hasSizeGreaterThan(0)
                      .hasAtLeastOneElementOfType(BootcampModel.class);
@@ -127,15 +128,15 @@ class BootcampRepositoryImplTest {
             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()), new Select("id"));
             Assertions.assertThat(bootcampList)
                     .hasSizeGreaterThan(0)
-                    .hasAtLeastOneElementOfType(BootcampModel.class);
-            Assertions.assertThat(bootcampList.getFirst().getId()).isNotNull();
+                    .hasAtLeastOneElementOfType(Map.class);
+            Assertions.assertThat(bootcampList.getFirst().get("id")).isNotNull();
         }
 
         @Test
         @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
         void findAllSuccessfullyWithEmptyList() {
             bootcampRepository.create(bootcampSupplier.get());
-            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(1, List.of("name", "omar")), null);
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(1, List.of("name", "omar")));
 
             Assertions.assertThat(bootcampList)
                     .hasSize(0);

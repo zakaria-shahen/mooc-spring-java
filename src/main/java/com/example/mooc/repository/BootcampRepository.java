@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BootcampRepository {
 
@@ -18,7 +19,9 @@ public interface BootcampRepository {
 
     Boolean delete(Long id);
 
-    List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy, Select select);
+    List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy);
+
+    List<Map<String, Object>> findAll(Pageable pageable, FilterBy filterBy, Select select);
 
     BootcampModel findById(Long id);
 
