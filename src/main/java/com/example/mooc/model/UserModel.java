@@ -16,4 +16,5 @@ public class UserModel {
     private String password;
     private boolean status;
     private boolean loginAttempts;
+    private String role;
 }

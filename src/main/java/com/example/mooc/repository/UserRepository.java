@@ -8,6 +8,4 @@ public interface UserRepository {
 
     UserModel findByEmail(@NotBlank @Email String email);
 
-    UserModel findByEmailAndPassword(@NotBlank @Email String email, @NotBlank String password);
-
 }

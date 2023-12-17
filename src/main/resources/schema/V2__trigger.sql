@@ -1,6 +1,3 @@
-alter table COURSE
-    add cost number default 0 not null;
-
 create or replace trigger bootcamp_average_cost_after_insert_update_delete
     after insert or update or delete
     on COURSE
