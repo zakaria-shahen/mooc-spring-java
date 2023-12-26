@@ -34,6 +34,19 @@ public class JweService {
 
     }
 
+    public static class ClaimNames {
+
+        private ClaimNames() {
+        }
+
+        public static final String SCOPE = "scope";
+        // OpenID Claims
+        public static final String NAME = "name";
+        public static final String EMAIL = "email";
+        // Custom Claims
+        public static final String USER_ID = "user_id";
+    }
+
     static final int REFRESH_TOKEN_COUNT = 100;
     static final String REFRESH_TOKEN = "refresh_token";
     public static final long EXPIRATION_AFTER_SECONDS = 600L;
@@ -43,12 +56,12 @@ public class JweService {
     public static String generateAccessToken(UserModel user) {
         return Jwts.builder().claims()
                 .issuer("mooc")
-                .add("scope", user.getRole())
+                .add(ClaimNames.SCOPE, user.getRole())
                 // OpenID Claims
-                .add("name", user.getName())
-                .add("email", user.getEmail())
+                .add(ClaimNames.NAME, user.getName())
+                .add(ClaimNames.EMAIL, user.getEmail())
                 // Custom Claims
-                .add("user_id", user.getId())
+                .add(ClaimNames.USER_ID, user.getId())
                 .and()
                 .expiration(Date.from(Instant.now().plusSeconds(EXPIRATION_AFTER_SECONDS)))
                 .encryptWith(EncryptInfo.ACCESS_TOKEN.secretKey, EncryptInfo.ACCESS_TOKEN.aeadAlgorithm)
@@ -73,12 +86,12 @@ public class JweService {
         final Instant notBefore = Instant.now().plusSeconds(EXPIRATION_AFTER_SECONDS);
         return Jwts.builder().claims()
                 .issuer("mooc")
-                .add("roles", user.getRole())
+                .add(ClaimNames.SCOPE, user.getRole())
                 // OpenID Claims
-                .add("name", user.getName())
-                .add("email", user.getEmail())
+                .add(ClaimNames.NAME, user.getName())
+                .add(ClaimNames.EMAIL, user.getEmail())
                 // Custom Claims
-                .add("user_id", user.getId())
+                .add(ClaimNames.USER_ID, user.getId())
                 .add(REFRESH_TOKEN, REFRESH_TOKEN_COUNT)
                 .and()
                 .notBefore(Date.from(notBefore))

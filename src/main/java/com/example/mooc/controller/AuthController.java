@@ -7,11 +7,13 @@ import com.example.mooc.dto.response.LoginResponse;
 import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.security.AuthenticationService;
+import com.example.mooc.security.JweService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 
 @AllArgsConstructor
 @RestController
@@ -48,7 +50,7 @@ public class AuthController {
             @RequestParam(value = "client_secret", defaultValue = "secret")
             String clientSecret
     ) {
-        if (grantType != "refresh_token" || clientId != "web" || clientSecret != "secret") {
+        if (!Objects.equals(grantType, "refresh_token") || !Objects.equals(clientId, "web") || !Objects.equals(clientSecret, "secret")) {
             throw new AuthInvalidException();
         }
 
@@ -64,6 +66,7 @@ public class AuthController {
     ) {
         authenticationService.logout(
                 principal.getToken().getTokenValue(),
+                (long) principal.getTokenAttributes().get(JweService.ClaimNames.USER_ID),
                 refreshToken
         );
 

@@ -9,18 +9,16 @@ import com.example.mooc.model.RefreshTokenBlockList;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.AccessTokenBlockListRepo;
 import com.example.mooc.repository.RefreshTokenBlockListRepository;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.PrematureJwtException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-
 import static com.example.mooc.security.JweService.EXPIRATION_AFTER_SECONDS;
-import static com.example.mooc.security.JweService.validateAccessTokenAndGetJwe;
 
 @Component
 @AllArgsConstructor
@@ -78,7 +76,21 @@ public class AuthenticationService {
         );
     }
 
-    public void logout(String accessToken, String refreshToken) {
+    public void logout(String accessToken, long userIdInAccessToken, String refreshToken) {
+        Claims refreshTokenClaims;
+        try {
+            refreshTokenClaims = JweService.validateRefreshTokenAndGetClaims(refreshToken);
+        } catch (PrematureJwtException ex) {
+             if (!ex.getMessage().contains("JWT early by")) {
+                 throw ex;
+             }
+             refreshTokenClaims = ex.getClaims();
+        }
+
+        if (refreshTokenClaims.get(JweService.ClaimNames.USER_ID, Long.class) != userIdInAccessToken) {
+            throw new AuthInvalidException();
+        }
+
         accessTokenBlockListRepo.save(new AccessTokenBlockList(accessToken));
         refreshTokenBlockListRepository.save(new RefreshTokenBlockList(refreshToken));
     }
