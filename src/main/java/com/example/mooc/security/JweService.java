@@ -14,7 +14,8 @@ import java.util.Date;
 
 public class JweService {
 
-    private JweService() {}
+    private JweService() {
+    }
 
     private static final SecretKey SECRET_KEY = new SecretKeySpec(Base64.getDecoder().decode("yLZaJx1QSOjJ6q7kJhjuJ7JMGV9uDSy7quRYvvcSV9E="), 0, 32, "AES");
     private static final AeadAlgorithm AEAD_ALGORITHM = Jwts.ENC.A256GCM;
@@ -35,6 +36,16 @@ public class JweService {
                 .encryptWith(SECRET_KEY, AEAD_ALGORITHM)
                 .compact();
 
+    }
+
+    public static String generateToken(String token) {
+        var claims = validateTokenAndReturnClaims(token);
+        return Jwts.builder().claims()
+                .add(claims)
+                .and()
+                .expiration(Date.from(Instant.now().plusSeconds(EXPIRATION_AFTER_SECONDS)))
+                .encryptWith(SECRET_KEY, AEAD_ALGORITHM)
+                .compact();
     }
 
     public static Claims validateTokenAndReturnClaims(String token) {

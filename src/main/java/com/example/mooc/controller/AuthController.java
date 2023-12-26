@@ -6,11 +6,10 @@ import com.example.mooc.dto.request.RegistrationRequest;
 import com.example.mooc.dto.response.LoginResponse;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.security.AuthenticationService;
+import com.example.mooc.security.JweService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -36,6 +35,13 @@ public class AuthController {
     public Map<String, String> publisherRegistration(@RequestBody RegistrationRequest registrationRequest) {
         authenticationService.userRegistration(registrationRequest, UserModel.ROLE.PUBLISHER);
         return Map.of("status", "created successfully");
+    }
+
+    @PostMapping("/token")
+    public LoginResponse newToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        var BEARER = "bearer";
+        token = token.substring(token.indexOf(BEARER));
+        return new LoginResponse(JweService.generateToken(token));
     }
 
 }

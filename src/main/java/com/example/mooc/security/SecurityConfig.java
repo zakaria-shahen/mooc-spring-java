@@ -17,7 +17,13 @@ public class SecurityConfig {
     public SecurityFilterChain endpointsSecurity(HttpSecurity httpSecurity) throws Exception {
         // JWE have user id, user name, rule(user, admin)
         return httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                authorizationManagerRequestMatcherRegistry.anyRequest().permitAll()
+                authorizationManagerRequestMatcherRegistry
+                        .requestMatchers("/auth/token").authenticated()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/health"
+                        ).anonymous()
+                        .anyRequest().authenticated()
         ).csrf(AbstractHttpConfigurer::disable).build();
     }
 }
