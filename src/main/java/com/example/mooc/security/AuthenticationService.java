@@ -57,7 +57,7 @@ public class AuthenticationService {
         userService.addUser(UserModel.builder()
                 .email(registrationRequest.email())
                 .name(registrationRequest.name())
-                .role(role.name())
+                .role(STR."ROLE_\{role.name()}")
                 .loginAttempts(0)
                 .password(password)
                 .build()

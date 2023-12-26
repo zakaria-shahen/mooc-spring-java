@@ -1,5 +1,6 @@
 package com.example.mooc.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,9 +18,11 @@ public class HealthController {
     }
 
     @GetMapping("/health/Authenticated")
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER')")
     public Map<Object, Object> getStatus(JwtAuthenticationToken principal) {
         return Map.of(
-                "status", principal.getToken().getClaim("user_id")
+                "status", principal.getToken().getClaims(),
+                "statusf", principal.getAuthorities()
         );
     }
 }

@@ -43,7 +43,7 @@ public class JweService {
     public static String generateAccessToken(UserModel user) {
         return Jwts.builder().claims()
                 .issuer("mooc")
-                .add("roles", user.getRole())
+                .add("scope", user.getRole())
                 // OpenID Claims
                 .add("name", user.getName())
                 .add("email", user.getEmail())
