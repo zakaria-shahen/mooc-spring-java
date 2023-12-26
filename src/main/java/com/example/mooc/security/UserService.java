@@ -15,12 +15,16 @@ public class UserService {
     private static final Integer ALLOW_LOGIN_ATTEMPTS = 5;
 
     public UserModel loadUserByPrincipalAndApplyLoginAttempts(String email) {
-         var user = userRepository.findByEmail(email);
+         var user = loadUserByPrincipal(email);
          if (user.getLoginAttempts() >= ALLOW_LOGIN_ATTEMPTS) {
               throw new AuthExceedLoginAttemptsException();
          }
          userRepository.incrementLoginAttempts(email);
          return user;
+    }
+
+    public UserModel loadUserByPrincipal(String email) {
+        return userRepository.findByEmail(email);
     }
 
     public boolean resetLoginAttempts(String email) {
@@ -31,4 +35,8 @@ public class UserService {
         return userRepository.addUser(userModel);
     }
 
+
+    public UserModel updateUser(UserModel userModel) {
+         return userRepository.updateUser(userModel);
+    }
 }

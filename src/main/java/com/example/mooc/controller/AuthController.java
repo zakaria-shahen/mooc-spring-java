@@ -3,6 +3,8 @@ package com.example.mooc.controller;
 
 import com.example.mooc.dto.request.LoginRequest;
 import com.example.mooc.dto.request.RegistrationRequest;
+import com.example.mooc.dto.request.RestCredentialsRequest;
+import com.example.mooc.dto.request.SetCredentialsRequest;
 import com.example.mooc.dto.response.LoginResponse;
 import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
@@ -71,6 +73,26 @@ public class AuthController {
         );
 
         return Map.of("status", "Successfully logout");
+    }
+
+    @PostMapping("/credentials/reset")
+    public Map<String, String> resetPassword(@RequestBody RestCredentialsRequest restCredentialsRequest) {
+        if (restCredentialsRequest.receiverType() != null) {
+            // support email only.
+            throw new UnsupportedOperationException();
+        }
+
+        authenticationService.restCredentials(restCredentialsRequest);
+        return Map.of("status", "Successfully sent reset credentials request");
+
+    }
+
+    @PostMapping("/credentials/set")
+    public Map<String, String> resetPassword(@RequestBody SetCredentialsRequest setCredentialsRequest){
+
+        authenticationService.setCredentials(setCredentialsRequest);
+        return Map.of("status", "Successfully set credentials");
+
     }
 
 }

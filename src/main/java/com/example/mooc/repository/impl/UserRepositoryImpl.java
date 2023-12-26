@@ -1,6 +1,7 @@
 package com.example.mooc.repository.impl;
 
 import com.example.mooc.exception.NotFoundResourceWhileFetchingException;
+import com.example.mooc.exception.NotFoundResourceWhileUpdatingException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -47,5 +48,18 @@ public class UserRepositoryImpl implements UserRepository {
         userModel.setId(key.getKey().longValue());
         return userModel;
 
+    }
+
+    @Override
+    public UserModel updateUser(UserModel userModel) {
+        boolean isUpdated = jdbcClient.sql("""
+            update USER_ set #name = @, #email = @, #password = @, #status = @, #role = @ 
+            where id = :id
+            """).paramSource(userModel)
+                .update() == 1;
+        if (isUpdated) {
+            throw new NotFoundResourceWhileUpdatingException();
+        }
+        return userModel;
     }
 }

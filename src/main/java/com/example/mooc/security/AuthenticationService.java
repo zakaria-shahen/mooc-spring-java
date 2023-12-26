@@ -1,14 +1,19 @@
 package com.example.mooc.security;
 
+import com.example.mooc.client.EmailClient;
 import com.example.mooc.dto.request.LoginRequest;
 import com.example.mooc.dto.request.RegistrationRequest;
+import com.example.mooc.dto.request.RestCredentialsRequest;
+import com.example.mooc.dto.request.SetCredentialsRequest;
 import com.example.mooc.dto.response.LoginResponse;
 import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.AccessTokenBlockList;
+import com.example.mooc.model.OtpModel;
 import com.example.mooc.model.RefreshTokenBlockList;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.AccessTokenBlockListRepo;
 import com.example.mooc.repository.RefreshTokenBlockListRepository;
+import com.example.mooc.service.OtpService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.PrematureJwtException;
 import lombok.AllArgsConstructor;
@@ -26,6 +31,9 @@ public class AuthenticationService {
     private UserService userService;
     private AccessTokenBlockListRepo accessTokenBlockListRepo;
     private RefreshTokenBlockListRepository refreshTokenBlockListRepository;
+    private EmailClient emailClient;
+    private OtpService otpService;
+
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public LoginResponse authenticate(LoginRequest loginRequest) throws AuthenticationException {
@@ -93,5 +101,24 @@ public class AuthenticationService {
 
         accessTokenBlockListRepo.save(new AccessTokenBlockList(accessToken));
         refreshTokenBlockListRepository.save(new RefreshTokenBlockList(refreshToken));
+    }
+
+    public void restCredentials(RestCredentialsRequest restCredentialsRequest) {
+        var user = userService.loadUserByPrincipal(restCredentialsRequest.receiver());
+        var otpModel = otpService.generateAndSaveOtp(restCredentialsRequest.receiver(), OtpModel.OtpType.RESET_CREDENTIALS);
+        String body = STR."""
+                Hello, if you need to reset your password, please use next id and otp to set new password.
+                ID: \{otpModel.getId()}
+                OTP: \{otpModel.getOtp()}
+                """.strip();
+
+        emailClient.send(restCredentialsRequest.receiver(), body);
+    }
+
+    public void setCredentials(SetCredentialsRequest setCredentialsRequest) {
+        otpService.validateOtpAndIncrementAttempts(setCredentialsRequest.otpId(), setCredentialsRequest.otp());
+        UserModel user = userService.loadUserByPrincipal(setCredentialsRequest.receiver());
+        user.setPassword(passwordEncoder.encode(setCredentialsRequest.credentials()));
+        userService.updateUser(user);
     }
 }
