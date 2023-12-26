@@ -1,6 +1,7 @@
 package com.example.mooc.security;
 
 import com.example.mooc.dto.request.LoginRequest;
+import com.example.mooc.dto.request.RegistrationRequest;
 import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
 import lombok.AllArgsConstructor;
@@ -31,4 +32,15 @@ public class AuthenticationService {
          }
     }
 
+    public void userRegistration(RegistrationRequest registrationRequest, UserModel.ROLE role) {
+        String password = passwordEncoder.encode(registrationRequest.password());
+        userService.addUser(UserModel.builder()
+                .email(registrationRequest.email())
+                .name(registrationRequest.name())
+                .role(role.name())
+                .loginAttempts(0)
+                .password(password)
+                .build()
+        );
+    }
 }

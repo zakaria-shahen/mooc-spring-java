@@ -2,6 +2,7 @@ package com.example.mooc.model;
 
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -16,5 +17,9 @@ public class UserModel {
     private String password;
     private boolean status;
     private Integer loginAttempts;
-    private String role;
+    @NotBlank private String role;
+
+    public enum ROLE {
+           ADMIN, PUBLISHER, USER
+    }
 }

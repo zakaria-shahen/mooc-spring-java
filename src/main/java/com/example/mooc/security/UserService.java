@@ -27,5 +27,8 @@ public class UserService {
         return userRepository.resetLoginAttempts(email);
     }
 
+    public UserModel addUser(UserModel userModel) {
+        return userRepository.addUser(userModel);
+    }
 
 }

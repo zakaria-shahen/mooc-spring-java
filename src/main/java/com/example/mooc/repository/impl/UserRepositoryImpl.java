@@ -5,6 +5,7 @@ import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -35,5 +36,16 @@ public class UserRepositoryImpl implements UserRepository {
         return jdbcClient.sql("update USER_ set login_attempts = 0 where email = ?")
                 .param(email)
                 .update() == 1;
+    }
+
+    @Override
+    public UserModel addUser(UserModel userModel) {
+        var key = new GeneratedKeyHolder();
+        jdbcClient.sql("insert into USER_(#name, #email, #password, #status, #login_attempts, #role) values(@@)")
+                .paramSource(userModel)
+                .update(key, "id");
+        userModel.setId(key.getKey().longValue());
+        return userModel;
+
     }
 }

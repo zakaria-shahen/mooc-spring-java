@@ -12,4 +12,7 @@ public interface UserRepository {
 
     boolean resetLoginAttempts(@NotBlank @Email String email);
 
+    UserModel addUser(UserModel userModel);
+
+
 }
