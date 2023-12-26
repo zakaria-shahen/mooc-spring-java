@@ -14,5 +14,4 @@ public interface UserRepository {
 
     UserModel addUser(UserModel userModel);
 
-
 }
