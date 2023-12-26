@@ -13,7 +13,7 @@ import java.util.HashMap;
 public class CJweDecoder implements JwtDecoder {
     @Override
     public Jwt decode(String token) throws JwtException {
-        var jwe = JweService.validateTokenAndReturnJwe(token);
+        var jwe = JweService.validateAccessTokenAndGetJwe(token);
         var claims = new HashMap<>(jwe.getPayload());
         claims.replace(JwtClaimNames.EXP, Instant.ofEpochSecond((Long) claims.get(JwtClaimNames.EXP)));
         return Jwt.withTokenValue(token)

@@ -4,11 +4,10 @@ package com.example.mooc.controller;
 import com.example.mooc.dto.request.LoginRequest;
 import com.example.mooc.dto.request.RegistrationRequest;
 import com.example.mooc.dto.response.LoginResponse;
+import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.security.AuthenticationService;
-import com.example.mooc.security.JweService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -22,7 +21,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return new LoginResponse(authenticationService.authenticate(loginRequest));
+        return authenticationService.authenticate(loginRequest);
     }
 
     @PostMapping("/user/registration")
@@ -38,10 +37,21 @@ public class AuthController {
     }
 
     @PostMapping("/token")
-    public LoginResponse newToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        final String BEARER = "Bearer ";
-        token = token.replace(BEARER, "");
-        return new LoginResponse(JweService.generateToken(token));
+    public LoginResponse newToken(
+            @RequestParam(value = "grant_type", defaultValue = "refresh_token")
+            String grantType,
+            @RequestParam("refresh_token")
+            String refreshToken,
+            @RequestParam(value = "client_id", defaultValue = "web")
+            String clientId,
+            @RequestParam(value = "client_secret", defaultValue = "secret")
+            String clientSecret
+    ) {
+        if (grantType != "refresh_token" || clientId != "web" || clientSecret != "secret") {
+            throw new AuthInvalidException();
+        }
+
+        return authenticationService.refreshTokenGrantType(refreshToken);
     }
 
 }

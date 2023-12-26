@@ -23,7 +23,6 @@ public class SecurityConfig {
         // JWE have user id, user name, rule(user, admin)
         return httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/auth/token").authenticated()
                         .requestMatchers(
                                 "/auth/**",
                                 "/health"
