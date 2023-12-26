@@ -39,8 +39,8 @@ public class AuthController {
 
     @PostMapping("/token")
     public LoginResponse newToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
-        var BEARER = "bearer";
-        token = token.substring(token.indexOf(BEARER) + 1);
+        final String BEARER = "Bearer ";
+        token = token.replace(BEARER, "");
         return new LoginResponse(JweService.generateToken(token));
     }
 

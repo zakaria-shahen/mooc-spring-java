@@ -2,9 +2,12 @@ package com.example.mooc.security;
 
 import com.example.mooc.model.UserModel;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwe;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.AeadAlgorithm;
+import io.jsonwebtoken.security.Jwks;
+import io.jsonwebtoken.security.SecretJwk;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -50,6 +53,10 @@ public class JweService {
 
     public static Claims validateTokenAndReturnClaims(String token) {
         return parser.parseEncryptedClaims(token).getPayload();
+    }
+
+    public static Jwe<Claims> validateTokenAndReturnJwe(String token) {
+        return parser.parseEncryptedClaims(token);
     }
 
 }
