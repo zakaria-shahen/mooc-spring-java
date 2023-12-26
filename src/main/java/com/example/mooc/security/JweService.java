@@ -104,12 +104,10 @@ public class JweService {
     }
 
     public static Claims validateRefreshTokenAndGetClaims(String token) {
-        // TODO: block old token
         return parserRefreshToken.parseEncryptedClaims(token).getPayload();
     }
 
     public static Jwe<Claims> validateAccessTokenAndGetJwe(String token) {
-        // TODO: block old token
         return parserAccessToken.parseEncryptedClaims(token);
     }
 

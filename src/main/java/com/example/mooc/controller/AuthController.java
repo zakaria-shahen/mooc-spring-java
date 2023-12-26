@@ -8,6 +8,7 @@ import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.security.AuthenticationService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -52,6 +53,21 @@ public class AuthController {
         }
 
         return authenticationService.refreshTokenGrantType(refreshToken);
+    }
+
+
+    @PostMapping("/logout")
+    public Map<String, String> logout(
+            @RequestParam("refresh_token")
+            String refreshToken,
+            JwtAuthenticationToken principal
+    ) {
+        authenticationService.logout(
+                principal.getToken().getTokenValue(),
+                refreshToken
+        );
+
+        return Map.of("status", "Successfully logout");
     }
 
 }

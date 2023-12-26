@@ -20,9 +20,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain endpointsSecurity(HttpSecurity httpSecurity) throws Exception {
-        // JWE have user id, user name, rule(user, admin)
+        // rule(user, admin)
         return httpSecurity.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
+                        .requestMatchers("/auth/logout").authenticated()
                         .requestMatchers(
                                 "/auth/**",
                                 "/health"
