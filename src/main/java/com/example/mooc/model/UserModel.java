@@ -15,6 +15,6 @@ public class UserModel {
     @NotBlank private String email;
     private String password;
     private boolean status;
-    private boolean loginAttempts;
+    private Integer loginAttempts;
     private String role;
 }

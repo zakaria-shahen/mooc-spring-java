@@ -16,12 +16,11 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public String authenticate(LoginRequest loginRequest) throws AuthenticationException {
-        String principal = loginRequest.principal();
-        String credentials = loginRequest.credentials();
-        UserModel user = userService.loadUserByPrincipal(principal);
+        UserModel user = userService.loadUserByPrincipalAndApplyLoginAttempts(loginRequest.principal());
 
-        validateCredentials(credentials, user.getPassword());
+        validateCredentials(loginRequest.credentials(), user.getPassword());
         user.setPassword(null);
+        userService.resetLoginAttempts(user.getEmail());
 
         return JweService.generateToken(user);
     }

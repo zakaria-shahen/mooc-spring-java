@@ -8,4 +8,8 @@ public interface UserRepository {
 
     UserModel findByEmail(@NotBlank @Email String email);
 
+    boolean incrementLoginAttempts(@NotBlank @Email String email);
+
+    boolean resetLoginAttempts(@NotBlank @Email String email);
+
 }

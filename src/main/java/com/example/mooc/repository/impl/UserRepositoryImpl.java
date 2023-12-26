@@ -22,4 +22,18 @@ public class UserRepositoryImpl implements UserRepository {
                 .optional()
                 .orElseThrow(NotFoundResourceWhileFetchingException::new);
     }
+
+    @Override
+    public boolean incrementLoginAttempts(String email) {
+        return jdbcClient.sql("update USER_ set login_attempts = login_attempts+1 where email = ?")
+                .param(email)
+                .update() == 1;
+    }
+
+    @Override
+    public boolean resetLoginAttempts(String email) {
+        return jdbcClient.sql("update USER_ set login_attempts = 0 where email = ?")
+                .param(email)
+                .update() == 1;
+    }
 }

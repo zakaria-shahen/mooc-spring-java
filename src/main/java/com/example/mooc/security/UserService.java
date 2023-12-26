@@ -1,15 +1,10 @@
 package com.example.mooc.security;
 
+import com.example.mooc.exception.AuthExceedLoginAttemptsException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 
 @Component
@@ -17,13 +12,20 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
+    private static final Integer ALLOW_LOGIN_ATTEMPTS = 5;
 
-    public UserModel loadUserByPrincipal(String email) {
-        return userRepository.findByEmail(email);
+    public UserModel loadUserByPrincipalAndApplyLoginAttempts(String email) {
+         var user = userRepository.findByEmail(email);
+         if (user.getLoginAttempts() >= ALLOW_LOGIN_ATTEMPTS) {
+              throw new AuthExceedLoginAttemptsException();
+         }
+         userRepository.incrementLoginAttempts(email);
+         return user;
     }
 
-
-
+    public boolean resetLoginAttempts(String email) {
+        return userRepository.resetLoginAttempts(email);
+    }
 
 
 }
