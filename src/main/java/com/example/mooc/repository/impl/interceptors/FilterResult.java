@@ -1,11 +1,7 @@
 package com.example.mooc.repository.impl.interceptors;
 
 import com.example.mooc.repository.impl.interceptors.specification.JdbcClientSqlInterceptor;
-import org.springframework.jdbc.support.JdbcUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class FilterResult implements JdbcClientSqlInterceptor {
@@ -35,16 +31,6 @@ public class FilterResult implements JdbcClientSqlInterceptor {
                 """;
         where = where.substring(0, where.length() - DELETE_LAST_OPERATOR);
         return where;
-    }
-
-    @Deprecated
-    public static List<String> parserFilterParameters(Map<String, String> by) {
-        var filtersValues = new ArrayList<String>();
-        by.forEach((key, value) ->  {
-            filtersValues.add(JdbcUtils.convertPropertyNameToUnderscoreName(key));
-            filtersValues.add(value);
-        });
-        return filtersValues;
     }
 
 }
