@@ -42,7 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public UserModel addUser(UserModel userModel) {
         var key = new GeneratedKeyHolder();
-        jdbcClient.sql("insert into USER_(#name, #email, #password, #status, #login_attempts, #role) values(@@)")
+        jdbcClient.sql("insert into USER_(#name, #email, #password, #status, #role) values(@@)")
                 .paramSource(userModel)
                 .update(key, "id");
         userModel.setId(key.getKey().longValue());
@@ -57,7 +57,7 @@ public class UserRepositoryImpl implements UserRepository {
             where id = :id
             """).paramSource(userModel)
                 .update() == 1;
-        if (isUpdated) {
+        if (!isUpdated) {
             throw new NotFoundResourceWhileUpdatingException();
         }
         return userModel;

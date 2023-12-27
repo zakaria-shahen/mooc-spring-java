@@ -8,6 +8,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -28,18 +29,18 @@ public class OtpService {
                 .createAt(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC))
                 .build();
         otpModel = otpRepository.create(otpModel);
+        otpModel.setOtp(otp);
 
         return otpModel;
     }
 
     private String generateRandomOtpNumber() {
-        // todo
-        return "0000";
+        return String.valueOf(new SecureRandom().nextInt(9999));
     }
 
     public void validateOtpAndIncrementAttempts(Long id, String otp) {
         var otpModel = otpRepository.findById(id);
-        if (otpModel.getCreateAt() + otpModel.getExpirationAfterSeconds() < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {
+        if (otpModel.isUsed() || otpModel.getCreateAt() + otpModel.getExpirationAfterSeconds() < LocalDateTime.now().toEpochSecond(ZoneOffset.UTC)) {
             throw new OtpInvalidException();
         }
 

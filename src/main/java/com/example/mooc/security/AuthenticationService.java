@@ -39,6 +39,10 @@ public class AuthenticationService {
     public LoginResponse authenticate(LoginRequest loginRequest) throws AuthenticationException {
         UserModel user = userService.loadUserByPrincipalAndApplyLoginAttempts(loginRequest.principal());
 
+        if (user.isStatus()) {
+             throw new AuthInvalidException();
+        }
+        
         validateCredentials(loginRequest.credentials(), user.getPassword());
         user.setPassword(null);
         userService.resetLoginAttempts(user.getEmail());
@@ -65,6 +69,7 @@ public class AuthenticationService {
                 .name(registrationRequest.name())
                 .role(STR."ROLE_\{role.name()}")
                 .loginAttempts(0)
+                .status(true)
                 .password(password)
                 .build()
         );
