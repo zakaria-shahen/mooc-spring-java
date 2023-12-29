@@ -4,6 +4,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,6 +16,9 @@ public class FiltersConverter implements Converter<String, FilterBy> {
 
     @Override
     public FilterBy convert(String source) {
+        if (source.isEmpty()) {
+            return new FilterBy(0, Collections.emptyList());
+        }
         List<String> asParams = convertToList(source);
         int size = asParams.isEmpty() ? 0 : asParams.size() / 2;
         return new FilterBy(size, asParams);
