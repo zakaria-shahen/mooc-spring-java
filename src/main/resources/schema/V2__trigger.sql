@@ -4,8 +4,8 @@ create or replace trigger bootcamp_average_cost_after_insert_update_delete
     for each row
 begin
     update BOOTCAMP
-    set AVERAGE_COST = (select avg(c.COST) from COURSE c where c.BOOTCAMP_ID = BOOTCAMP_ID)
-    where BOOTCAMP.ID = bootcamp_id;
+    set AVERAGE_COST = coalesce((select avg(c.COST) from COURSE c where c.BOOTCAMP_ID = :new.BOOTCAMP_ID), 0)
+    where BOOTCAMP.ID = :new.BOOTCAMP_ID;
 end;
 
 
@@ -16,11 +16,13 @@ create or replace trigger bootcamp_rating_cost_after_insert_update_delete
 declare
     bootcamp_id number;
 begin
-    bootcamp_id := (select BOOTCAMP_ID from COURSE where COURSE.BOOTCAMP_ID = COURSE_ID);
+    select COURSE.BOOTCAMP_ID into bootcamp_id from COURSE where COURSE.ID = :new.COURSE_ID;
     update BOOTCAMP
-    set AVERAGE_RATING = (select avg(REVIEW.RATING)
-                          from REVIEW
-                                   join COURSE on COURSE.ID = COURSE_ID
-                          where COURSE.BOOTCAMP_ID = BOOTCAMP_ID)
+    set AVERAGE_RATING = coalesce(
+            (select avg(REVIEW.RATING)
+             from REVIEW
+                      join COURSE on COURSE.ID = REVIEW.COURSE_ID
+             where COURSE.BOOTCAMP_ID = bootcamp_id)
+        , 0)
     where BOOTCAMP.ID = bootcamp_id;
 end;
