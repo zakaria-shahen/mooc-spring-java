@@ -73,7 +73,7 @@ CREATE TABLE COURSE
     description   VARCHAR2(255)                           NOT NULL,
     weeks         NUMBER                                  NOT NULL,
     tuition       NUMBER                                  NOT NULL,
-    minimum_skill CHAR(1) CHECK (
+    minimum_skill CHAR(15) CHECK (
         minimum_skill IN (
                           'beginner',
                           'intermediate',
@@ -88,6 +88,7 @@ CREATE TABLE COURSE
     CONSTRAINT course_user_unique UNIQUE (user_id, title), /* Why? */
     CONSTRAINT course_pk PRIMARY KEY (id)
 );
+
 
 CREATE TABLE REVIEW
 (
@@ -116,14 +117,3 @@ CREATE TABLE CONFIG
     CONSTRAINT config_unique UNIQUE (param),
     CONSTRAINT config_pk PRIMARY KEY (id)
 );
-
-
-insert into user_(name, email, password)
-values ('admin', 'admin@admin', 'admin');
-
-INSERT INTO BOOTCAMP (NAME, DESCRIPTION, WEBSITE, PHONE, EMAIL, ADDRESS, HOUSING, JOB_ASSISTANCE,
-                      JOB_GUARANTEE, AVERAGE_COST, AVERAGE_RATING, USER_ID)
-VALUES ('testing', 'testing', 'testing', 'testing', 'testing@test.com', 'testing', 1, 1, 1, 1, null, 1);
-
-insert into CAREER(name) values ('Java');
-insert into BOOTCAMP_CAREER(career_id, bootcamp_id) values (1, 1);
