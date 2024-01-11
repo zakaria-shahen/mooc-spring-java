@@ -66,9 +66,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
                 #job_assistance = @,
                 #job_guarantee = @,
                 #average_cost = @,
-                #average_rating = @,
-                #user_id = @
-            where id = :id
+                #average_rating = @
+            where id = :id and user_id = :userId
         """.strip();
         logger.info("trying updating query against BOOTCAMP for bootcamp id -> {}", bootcampModel.getId());
         logger.debug("execute update query: {}", sql);
@@ -84,15 +83,27 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public Boolean delete(@NonNull BootcampModel bootcampModel) {
-        return delete(bootcampModel.getId());
+    public Boolean delete(@NonNull BootcampModel bootcampModel, boolean isNotAdmin) {
+        return delete(bootcampModel.getId(), bootcampModel.getUserId(), isNotAdmin);
     }
 
     @Override
-    public Boolean delete(@NonNull Long id) {
-        var sql = "delete from BOOTCAMP where id = ?";
+    public Boolean delete(@NonNull Long id, @NonNull Long userId, boolean isNotAdmin) {
+        //TODO: when upgrade to oracle DB 23c then use `?` only without if condition for `isNotAdmin`.
+        // language=SQL
+        var sql = STR."""
+                begin
+                delete from BOOTCAMP_CAREER where BOOTCAMP_ID = :id;
+                delete from BOOTCAMP_PHOTO where BOOTCAMP_ID = :id;
+                delete from REVIEW where COURSE_ID in (select id from course where BOOTCAMP_ID = :id);
+                delete from COURSE where BOOTCAMP_ID = :id;
+                delete from BOOTCAMP where id = :id and (1 = \{isNotAdmin ? 1 : 0} and user_id = :userId);
+                end;
+                """.strip();
+
         var affectRows = jdbcClient.sql(sql)
-                .param(id)
+                .param("id", id)
+                .param("userId", userId)
                 .update();
         if (affectRows != 1) {
             logger.debug("Fail, while deleting BOOTCAMP ID={}, affectRows={}", id, affectRows);

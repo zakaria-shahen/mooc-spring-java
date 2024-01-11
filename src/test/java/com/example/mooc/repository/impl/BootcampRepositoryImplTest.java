@@ -46,14 +46,14 @@ class BootcampRepositoryImplTest {
         @DisplayName("When trying to delete bootcamp doesn't exists Then throw exception")
         void deleteWithNotFoundResourceWhileDeletingException() {
             Assertions.assertThatExceptionOfType(NotFoundResourceWhileDeletingException.class)
-                    .isThrownBy(() -> bootcampRepository.delete(1000L));
+                    .isThrownBy(() -> bootcampRepository.delete(1000L, 1L, true));
         }
 
         @Test
         @DisplayName("When trying to delete bootcamp exists Then returns true")
         void deleteSuccessfully() {
             var persistenceBootcamp = bootcampRepository.create(bootcampSupplier.get());
-            Assertions.assertThat(bootcampRepository.delete(persistenceBootcamp)).isTrue();
+            Assertions.assertThat(bootcampRepository.delete(persistenceBootcamp, true)).isTrue();
         }
     }
 

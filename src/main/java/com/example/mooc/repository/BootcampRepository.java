@@ -15,9 +15,9 @@ public interface BootcampRepository {
 
     BootcampModel update(BootcampModel bootcampModel);
 
-    Boolean delete(BootcampModel bootcampModel);
+    Boolean delete(BootcampModel bootcampModel, boolean isNotAdmin);
 
-    Boolean delete(Long id);
+    Boolean delete(Long id, Long userId, boolean isNotAdmin);
 
     List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy);
 
