@@ -1,6 +1,5 @@
 package com.example.mooc.repository.impl;
 
-import com.example.mooc.model.CareerModel;
 import com.example.mooc.repository.BootcampCareerRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -19,63 +18,79 @@ public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public Boolean createAll(List<CareerModel> careerModelList, Long bootcampId) {
+    public Boolean createAll(List<Long> careerIds, Long bootcampId, Long userId, boolean isAdmin) {
         var sql = STR."""
              declare
                 bootcamp_id_value number;
+                have_access number;
              begin
                 select ? into bootcamp_id_value from dual;
-                \{careerModelList.stream().map(it ->
+                have_access := check_user_onw_bootcamp(bootcamp_id_value, ?, ?);
+                \{careerIds.stream().map (it ->
                         "insert into BOOTCAMP_CAREER(bootcamp_id, career_id) values(bootcamp_id_value, ?);"
                     ).collect(Collectors.joining())
                 }
              end;""".strip();
-        var careerIds = careerModelList.stream().map(CareerModel::getId).toList();
 
-        logger.info("trying to add careerList with size = {} to bootcamp id = {}", careerModelList.size(), bootcampId);
+        logger.info("trying to add careerList with size = {} to bootcamp id = {}", careerIds.size(), bootcampId);
         return jdbcClient.sql(sql)
                 .param(bootcampId)
+                .param(userId)
+                .param(isAdmin ? 1 : 0)
                 .params(careerIds)
                 .update() == 1;
     }
 
     @Override
-    public Boolean deleteAll(List<CareerModel> careerModelList, Long bootcampId) {
+    public Boolean deleteAll(List<Long> careerIds, Long bootcampId, Long userId, boolean isAdmin) {
         var sql = STR."""
              declare
                 bootcamp_id_value number;
+                have_access number;
              begin
                 select ? into bootcamp_id_value from dual;
-                \{careerModelList.stream().map(it ->
+                have_access := check_user_onw_bootcamp(bootcamp_id_value, ?, ?});
+                \{careerIds.stream().map(it ->
                         "delete from BOOTCAMP_CAREER where bootcamp_id = bootcamp_id_value and career_id = ?;"
                 ).collect(Collectors.joining())}
             end;""".strip();
-        var careerIds = careerModelList.stream().map(CareerModel::getId).toList();
 
-        logger.info("trying to delete careerList with size = {} from bootcamp id = {}", careerModelList.size(), bootcampId);
+        logger.info("trying to delete careerList with size = {} from bootcamp id = {}", careerIds.size(), bootcampId);
         return jdbcClient.sql(sql)
                 .param(bootcampId)
+                .param(userId)
+                .param(isAdmin ? 1 : 0)
                 .params(careerIds)
                 .update() == 1;
     }
 
     @Override
-    public Boolean create(CareerModel careerModel, Long bootcampId) {
-        var sql = "insert into BOOTCAMP_CAREER(bootcamp_id, career_id) values(?, ?)";
-        logger.info("trying to insert career {}, to bootcamp id = {}", careerModel, bootcampId);
+    public Boolean create(Long careerId, Long bootcampId, Long userId, boolean isAdmin) {
+        var sql = """
+             declare
+                have_access number;
+             begin
+                have_access := check_user_onw_bootcamp(:bootcampId, :userId, :isAdmin);
+                insert into BOOTCAMP_CAREER(bootcamp_id, career_id) values(:bootcampId, :careerId);
+            end;""".strip();
+        logger.info("trying to insert career {}, to bootcamp id = {}", careerId, bootcampId);
         return jdbcClient.sql(sql)
-                .param(bootcampId)
-                .param(careerModel.getId())
+                .param("bootcampId", bootcampId)
+                .param("userId", userId)
+                .param("isAdmin", isAdmin? 1 : 0)
+                .param("careerId", careerId)
                 .update() == 1;
     }
 
     @Override
-    public Boolean delete(CareerModel careerModel, Long bootcampId) {
-        var sql = "delete from BOOTCAMP_CAREER where bootcamp_id = ? and career_id = ?";
-        logger.info("trying to delete career = {}, to bootcamp id = {}", careerModel, bootcampId);
+    public Boolean delete(Long careerId, Long bootcampId, Long userId, boolean isAdmin) {
+        var sql = "delete from BOOTCAMP_CAREER where #bootcamp_id = @ and #career_id = @ and check_user_onw_bootcamp(:bootcampId, :userId, :isAdmin)";
+        logger.info("trying to delete career = {}, to bootcamp id = {}", careerId, bootcampId);
         return jdbcClient.sql(sql)
-                       .param(bootcampId)
-                       .param(careerModel.getId())
+                       .param("bootcampId", bootcampId)
+                       .param("userId", userId)
+                       .param("isAdmin", isAdmin? 1 : 0)
+                       .param("careerId", careerId)
                        .update() == 1;
     }
 }

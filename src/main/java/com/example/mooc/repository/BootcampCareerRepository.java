@@ -1,16 +1,14 @@
 package com.example.mooc.repository;
 
-import com.example.mooc.model.CareerModel;
-
 import java.util.List;
 
 public interface BootcampCareerRepository {
 
-    Boolean createAll(List<CareerModel> careerModelList, Long bootcampId);
+    Boolean createAll(List<Long> careerIds, Long bootcampId, Long userId, boolean isAdmin);
 
-    Boolean deleteAll(List<CareerModel> careerModelList, Long bootcampId);
+    Boolean deleteAll(List<Long> careerIds, Long bootcampId, Long userId, boolean isAdmin);
 
-    Boolean create(CareerModel careerModel, Long bootcampId);
+    Boolean create(Long careerId, Long bootcampId, Long userId, boolean isAdmin);
 
-    Boolean delete(CareerModel careerModel, Long bootcampId);
+    Boolean delete(Long careerId, Long bootcampId, Long userId, boolean isAdmin);
 }
