@@ -83,21 +83,24 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     }
 
     @Override
-    public Boolean delete(@NonNull BootcampModel bootcampModel, boolean isNotAdmin) {
-        return delete(bootcampModel.getId(), bootcampModel.getUserId(), isNotAdmin);
+    public Boolean delete(@NonNull BootcampModel bootcampModel, boolean isAdmin) {
+        return delete(bootcampModel.getId(), bootcampModel.getUserId(), isAdmin);
     }
 
     @Override
-    public Boolean delete(@NonNull Long id, @NonNull Long userId, boolean isNotAdmin) {
-        //TODO: when upgrade to oracle DB 23c then use `?` only without if condition for `isNotAdmin`.
+    public Boolean delete(@NonNull Long id, @NonNull Long userId, boolean isAdmin) {
+        //TODO: when upgrade to oracle DB 23c then use `?` only without if condition for `isAdmin`.
         // language=SQL
         var sql = STR."""
+                declare
+                    have_access number;
                 begin
-                delete from BOOTCAMP_CAREER where BOOTCAMP_ID = :id;
-                delete from BOOTCAMP_PHOTO where BOOTCAMP_ID = :id;
-                delete from REVIEW where COURSE_ID in (select id from course where BOOTCAMP_ID = :id);
-                delete from COURSE where BOOTCAMP_ID = :id;
-                delete from BOOTCAMP where id = :id and (1 = \{isNotAdmin ? 1 : 0} and user_id = :userId);
+                    have_access := check_user_onw_bootcamp(:id, :userId, \{isAdmin ? 1 : 0});
+                    delete from BOOTCAMP_CAREER where BOOTCAMP_ID = :id;
+                    delete from BOOTCAMP_PHOTO where BOOTCAMP_ID = :id;
+                    delete from REVIEW where COURSE_ID in (select id from course where BOOTCAMP_ID = :id);
+                    delete from COURSE where BOOTCAMP_ID = :id;
+                    delete from BOOTCAMP where id = :id;
                 end;
                 """.strip();
 
