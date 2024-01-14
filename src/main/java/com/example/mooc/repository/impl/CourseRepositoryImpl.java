@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
@@ -24,8 +23,15 @@ public class CourseRepositoryImpl implements CourseRepository {
     private final CustomJdbcClient jdbcClient;
 
     @Override
-    public CourseModel create(CourseModel courseModel) {
-        var sql = "insert into COURSE(#title, #description, #weeks, #tuition, #minimum_skill) values(@@)";
+    public CourseModel create(CourseModel courseModel, Boolean isAdmin) {
+        var sql = STR."""
+                declare
+                    have_access number;
+                begin
+                    have_access := check_user_onw_bootcamp(:bootcampId, :userId, \{isAdmin? 1 : 0});
+                    insert into COURSE(#title, #description, #weeks, #tuition, #minimum_skill) values(@@);
+                end;
+                """;
         logger.info("trying execute insert query against COURSE for course title -> {}", courseModel.getTitle());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
@@ -38,10 +44,10 @@ public class CourseRepositoryImpl implements CourseRepository {
     }
 
     @Override
-    public CourseModel update(CourseModel courseModel) {
-        var sql = """
+    public CourseModel update(CourseModel courseModel, Boolean isAdmin) {
+        var sql = STR."""
                     update BOOTCAMP SET #title = @, #description = @, #weeks = @, #tuition = @, #minimum_skill = @
-                    where #id = @ and user_id = @
+                    where #id = @ and (user_id = @ or 1 = \{isAdmin? 1 : 0})
                 """.strip();
         logger.info("trying updating query against COURSE for Course id -> {}, user id -> {}", courseModel.getId(), courseModel.getUserId());
         logger.debug("execute update query: {}", sql);
@@ -54,15 +60,16 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Override
     public Boolean delete(CourseModel courseModel) {
-        return delete(courseModel.getId(), courseModel.getUserId());
+        return delete(courseModel.getId(), courseModel.getUserId(), false);
     }
 
     @Override
-    public Boolean delete(Long courseId, Long userId) {
-        var sql = "delete from COURSE where id = ? and user_id = ?";
+    public Boolean delete(Long courseId, Long userId, Boolean isAdmin) {
+        var sql = "delete from COURSE where id = ? and (user_id = ? or 1 = ?)";
         var affectRows = jdbcClient.sql(sql)
                 .param(courseId)
-                .params(userId)
+                .param(userId)
+                .param(isAdmin? 1 : 0)
                 .update();
         if (affectRows != 1) {
             logger.debug("Fail, while deleting COURSE ID={}, user id={}, affectRows={}", courseId, userId, affectRows);

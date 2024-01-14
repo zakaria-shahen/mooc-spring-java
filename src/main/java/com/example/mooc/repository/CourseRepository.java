@@ -7,13 +7,13 @@ import java.util.List;
 
 public interface CourseRepository {
 
-    CourseModel create(CourseModel courseModel);
+    CourseModel create(CourseModel courseModel, Boolean isAdmin);
 
-    CourseModel update(CourseModel courseModel);
+    CourseModel update(CourseModel courseModel, Boolean isAdmin);
 
     Boolean delete(CourseModel courseModel);
 
-    Boolean delete(Long courseId, Long userId);
+    Boolean delete(Long courseId, Long userId, Boolean isAdmin);
 
     List<CourseModel> findAllByBootcampId(Long bootcampId, Pageable pageable);
 
