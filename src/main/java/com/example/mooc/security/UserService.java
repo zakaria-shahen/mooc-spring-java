@@ -1,6 +1,8 @@
 package com.example.mooc.security;
 
+import com.example.mooc.dto.UserDto;
 import com.example.mooc.exception.AuthExceedLoginAttemptsException;
+import com.example.mooc.mapping.UserModelToDtoMapper;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,17 @@ public class UserService {
 
 
     public UserModel updateUser(UserModel userModel) {
-         return userRepository.updateUser(userModel);
+        return userRepository.updateUser(userModel);
+    }
+
+    public UserDto updateUser(UserDto userDto) {
+        var model = UserModelToDtoMapper.INSTANCE.toModel(userDto);
+        model = userRepository.updateUserBasicInfo(model);
+        return UserModelToDtoMapper.INSTANCE.toDto(model);
+    }
+
+    public UserDto fetchById(Long id) {
+        var model = userRepository.findById(id);
+        return UserModelToDtoMapper.INSTANCE.toDto(model);
     }
 }

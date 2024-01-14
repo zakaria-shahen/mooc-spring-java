@@ -62,4 +62,26 @@ public class UserRepositoryImpl implements UserRepository {
         }
         return userModel;
     }
+
+    @Override
+    public UserModel updateUserBasicInfo(UserModel userModel) {
+        boolean isUpdated = jdbcClient
+                                    .sql("update USER_ set #name = @, #email = @, #status = @  where id = :id")
+                                    .paramSource(userModel)
+                                    .update() == 1;
+        if (!isUpdated) {
+            throw new NotFoundResourceWhileUpdatingException();
+        }
+        return userModel;
+    }
+
+    @Override
+    public UserModel findById(Long id) {
+        return jdbcClient
+                .sql("select id, name, email, password, status, login_attempts, role from USER_ where id = ?")
+                .param(id)
+                .query(UserModel.class)
+                .optional()
+                .orElseThrow(NotFoundResourceWhileFetchingException::new);
+    }
 }

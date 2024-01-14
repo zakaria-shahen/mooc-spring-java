@@ -16,4 +16,7 @@ public interface UserRepository {
 
     UserModel updateUser(UserModel userModel);
 
+    UserModel updateUserBasicInfo(UserModel userModel);
+
+    UserModel findById(Long id);
 }
