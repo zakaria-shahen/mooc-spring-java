@@ -49,7 +49,7 @@ public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
                 have_access number;
              begin
                 select ? into bootcamp_id_value from dual;
-                have_access := check_user_onw_bootcamp(bootcamp_id_value, ?, ?});
+                have_access := check_user_onw_bootcamp(bootcamp_id_value, ?, ?);
                 \{careerIds.stream().map(it ->
                         "delete from BOOTCAMP_CAREER where bootcamp_id = bootcamp_id_value and career_id = ?;"
                 ).collect(Collectors.joining())}
@@ -84,13 +84,13 @@ public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
 
     @Override
     public Boolean delete(Long careerId, Long bootcampId, Long userId, boolean isAdmin) {
-        var sql = "delete from BOOTCAMP_CAREER where #bootcamp_id = @ and #career_id = @ and check_user_onw_bootcamp(:bootcampId, :userId, :isAdmin)";
+        var sql = "delete from BOOTCAMP_CAREER where #bootcamp_id = @ and #career_id = @ and check_user_onw_bootcamp(:bootcampId, :userId, :isAdmin) = 1";
         logger.info("trying to delete career = {}, to bootcamp id = {}", careerId, bootcampId);
         return jdbcClient.sql(sql)
                        .param("bootcampId", bootcampId)
+                       .param("careerId", careerId)
                        .param("userId", userId)
                        .param("isAdmin", isAdmin? 1 : 0)
-                       .param("careerId", careerId)
                        .update() == 1;
     }
 }

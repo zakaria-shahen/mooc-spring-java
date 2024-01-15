@@ -30,6 +30,7 @@ class BootcampCareerRepositoryImplTest {
     private CareerModel mobileCareer = new CareerModel(null, STR."mobile:\{UUID.randomUUID()}");
     private CareerModel frontEndCareer = new CareerModel(null, STR."front-end:\{UUID.randomUUID()}");
     private Long bootcampId = null;
+    private Long userId = null;
     @Autowired
     BootcampRepository bootcampRepository;
 
@@ -39,6 +40,7 @@ class BootcampCareerRepositoryImplTest {
         devOpsCareer = careerRepository.create(devOpsCareer);
         mobileCareer = careerRepository.create(mobileCareer);
         frontEndCareer = careerRepository.create(frontEndCareer);
+        userId = 1L;
         bootcampId = bootcampRepository.create(BootcampModel.builder()
                 .name("omar")
                 .description("any")
@@ -49,7 +51,7 @@ class BootcampCareerRepositoryImplTest {
                 .housing(true)
                 .jobGuarantee(true)
                 .jobAssistance(true)
-                .userId(1L)
+                .userId(userId)
                 .build()).getId();
     }
 
@@ -59,9 +61,9 @@ class BootcampCareerRepositoryImplTest {
         @DisplayName("when trying to add list of career to bootcamp should returns true")
         void createByList() {
             Assertions.assertThat(bootcampId).isNotNull();
-            var status = bootcampCareerRepository.createAll(List.of(backendCareer, devOpsCareer), bootcampId);
+            var status = bootcampCareerRepository.createAll(List.of(backendCareer.getId(), devOpsCareer.getId()), bootcampId, userId, true);
             Assertions.assertThat(status).isTrue();
-            status = bootcampCareerRepository.createAll(List.of(mobileCareer), bootcampId);
+            status = bootcampCareerRepository.createAll(List.of(mobileCareer.getId()), bootcampId, userId, true);
             Assertions.assertThat(status).isTrue();
         }
 
@@ -69,7 +71,7 @@ class BootcampCareerRepositoryImplTest {
         @DisplayName("when trying to add one career to bootcamp then returns true")
         void createByOne() {
 
-            var status = bootcampCareerRepository.create(frontEndCareer, bootcampId);
+            var status = bootcampCareerRepository.create(frontEndCareer.getId(), bootcampId, userId , true);
             Assertions.assertThat(status).isTrue();
         }
 
@@ -77,9 +79,9 @@ class BootcampCareerRepositoryImplTest {
         @DisplayName("when trying to add career to bootcamp and this career exists in bootcamp then throw exception")
         @Disabled("TODO: move next test case to service layer test cases")
         void throwsWhenItExists() {
-            bootcampCareerRepository.create(frontEndCareer, bootcampId);
+            bootcampCareerRepository.create(frontEndCareer.getId(), bootcampId, userId, true);
             Assertions.assertThatExceptionOfType(ResourceYouTryToLinkToIsAlreadyLinked.class)
-                    .isThrownBy(() -> bootcampCareerRepository.create(frontEndCareer, bootcampId));
+                    .isThrownBy(() -> bootcampCareerRepository.create(frontEndCareer.getId(), bootcampId, userId, true));
         }
     }
 
@@ -88,9 +90,9 @@ class BootcampCareerRepositoryImplTest {
         @Test
         @DisplayName("when trying to delete list of career exists in bootcamp then returns true")
         void deleteByList() {
-            var careerList = List.of(backendCareer, devOpsCareer);
-            bootcampCareerRepository.createAll(careerList, bootcampId);
-            var status = bootcampCareerRepository.deleteAll(careerList, bootcampId);
+            var careerList = List.of(backendCareer.getId(), devOpsCareer.getId());
+            bootcampCareerRepository.createAll(careerList, bootcampId, userId, true);
+            var status = bootcampCareerRepository.deleteAll(careerList, bootcampId, userId, true);
             Assertions.assertThat(status).isTrue();
         }
 
@@ -98,8 +100,8 @@ class BootcampCareerRepositoryImplTest {
         @Test
         @DisplayName("when trying to delete one career exists in bootcamp then returns true")
         void deleteOne() {
-            bootcampCareerRepository.create(backendCareer, bootcampId);
-            var status = bootcampCareerRepository.delete(backendCareer, bootcampId);
+            bootcampCareerRepository.create(backendCareer.getId(), bootcampId, userId, true);
+            var status = bootcampCareerRepository.delete(backendCareer.getId(), bootcampId, userId, true);
             Assertions.assertThat(status).isTrue();
         }
     }

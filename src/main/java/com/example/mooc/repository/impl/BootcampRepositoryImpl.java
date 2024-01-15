@@ -91,11 +91,11 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public Boolean delete(@NonNull Long id, @NonNull Long userId, boolean isAdmin) {
         //TODO: when upgrade to oracle DB 23c then use `?` only without if condition for `isAdmin`.
         // language=SQL
-        var sql = STR."""
+        var sql = """
                 declare
                     have_access number;
                 begin
-                    have_access := check_user_onw_bootcamp(:id, :userId, \{isAdmin ? 1 : 0});
+                    have_access := check_user_onw_bootcamp(:id, :userId, :isAdmin);
                     delete from BOOTCAMP_CAREER where BOOTCAMP_ID = :id;
                     delete from BOOTCAMP_PHOTO where BOOTCAMP_ID = :id;
                     delete from REVIEW where COURSE_ID in (select id from course where BOOTCAMP_ID = :id);
@@ -107,6 +107,7 @@ public class BootcampRepositoryImpl implements BootcampRepository {
         var affectRows = jdbcClient.sql(sql)
                 .param("id", id)
                 .param("userId", userId)
+                .param("isAdmin", isAdmin? 1 : 0)
                 .update();
         if (affectRows != 1) {
             logger.debug("Fail, while deleting BOOTCAMP ID={}, affectRows={}", id, affectRows);
