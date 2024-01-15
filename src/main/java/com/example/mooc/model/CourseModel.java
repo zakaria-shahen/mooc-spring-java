@@ -19,18 +19,16 @@ public class CourseModel {
     @NotBlank private String description;
     @NotNull @Min(1) private Integer weeks;
     @NotNull private BigDecimal tuition;
-    @NotNull private MinimumSkill minimumSkill;
+    @NotBlank private String minimumSkill;
+    @NotNull private BigDecimal cost;
     @NotNull private Long bootcampId;
     @NotNull private Long userId;
 
 
     @AllArgsConstructor
     public enum MinimumSkill {
-        BEGINNER("beginner"),
-        INTERMEDIATE("intermediate"),
-        ADVANCED("advanced");
-
-        private final String name;
-
+        BEGINNER,
+        INTERMEDIATE,
+        ADVANCED;
     }
 }

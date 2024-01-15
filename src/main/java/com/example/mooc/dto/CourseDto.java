@@ -22,6 +22,7 @@ public class CourseDto {
     @Min(1) private Integer weeks;
     @NotNull private BigDecimal tuition;
     @NotNull private CourseModel.MinimumSkill minimumSkill;
+    @NotNull private BigDecimal cost;
     @NotNull private Long bootcampId;
     private Long userId;
 }

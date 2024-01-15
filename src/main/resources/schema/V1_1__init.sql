@@ -75,9 +75,9 @@ CREATE TABLE COURSE
     tuition       NUMBER                                  NOT NULL,
     minimum_skill CHAR(15) CHECK (
         minimum_skill IN (
-                          'beginner',
-                          'intermediate',
-                          'advanced'
+                          'BEGINNER',
+                          'INTERMEDIATE',
+                          'ADVANCED'
             )
         ),
     cost          NUMBER                                  NOT NULL,
