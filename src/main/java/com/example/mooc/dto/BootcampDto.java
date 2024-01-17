@@ -1,4 +1,4 @@
-package com.example.mooc.dto.response;
+package com.example.mooc.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

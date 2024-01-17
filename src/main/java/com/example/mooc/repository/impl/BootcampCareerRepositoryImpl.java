@@ -1,5 +1,6 @@
 package com.example.mooc.repository.impl;
 
+import com.example.mooc.model.CareerModel;
 import com.example.mooc.repository.BootcampCareerRepository;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -92,5 +93,19 @@ public class BootcampCareerRepositoryImpl implements BootcampCareerRepository {
                        .param("userId", userId)
                        .param("isAdmin", isAdmin? 1 : 0)
                        .update() == 1;
+    }
+
+    @Override
+    public List<CareerModel> findAllByBootcampId(Long id) {
+        var sql = """
+                select id, name from CAREER
+                inner join BOOTCAMP_CAREER on BOOTCAMP_CAREER.CAREER_ID = CAREER.ID
+                where BOOTCAMP_CAREER.BOOTCAMP_ID = ?
+                """;
+        logger.info("trying to fetch career List by bootcamp id = {}", id);
+        return jdbcClient.sql(sql)
+                .param(id)
+                .query(CareerModel.class)
+                .list();
     }
 }

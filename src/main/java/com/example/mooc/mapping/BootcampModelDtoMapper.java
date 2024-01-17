@@ -1,6 +1,7 @@
 package com.example.mooc.mapping;
 
-import com.example.mooc.dto.response.BootcampDto;
+import com.example.mooc.dto.BootcampDto;
+import com.example.mooc.dto.response.BootcampFullDto;
 import com.example.mooc.model.BootcampModel;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -16,4 +17,6 @@ public interface BootcampModelDtoMapper {
     BootcampDto toDto(BootcampModel model);
 
     BootcampModel toModel(BootcampDto bootcampDto);
+
+    BootcampFullDto toFullDto(BootcampModel bootcampModel);
 }

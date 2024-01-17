@@ -1,11 +1,13 @@
 package com.example.mooc.service;
 
 
-import com.example.mooc.dto.response.BootcampDto;
+import com.example.mooc.dto.BootcampDto;
+import com.example.mooc.dto.response.BootcampFullDto;
 import com.example.mooc.mapping.BootcampModelDtoMapper;
+import com.example.mooc.mapping.CourseModelToDtoMapper;
 import com.example.mooc.model.BootcampModel;
+import com.example.mooc.repository.BootcampCareerRepository;
 import com.example.mooc.repository.BootcampRepository;
-import com.example.mooc.repository.CareerRepository;
 import com.example.mooc.repository.CourseRepository;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
 import lombok.AllArgsConstructor;
@@ -19,7 +21,7 @@ import java.util.List;
 public class BootcampService {
 
     private BootcampRepository bootcampRepository;
-    private CareerRepository careerRepository;
+    private BootcampCareerRepository bootcampCareerRepository;
     private CourseRepository courseRepository;
 
     public BootcampDto create(BootcampDto bootcampDto) {
@@ -39,9 +41,21 @@ public class BootcampService {
         return BootcampModelDtoMapper.INSTANCE.toDto(bootcampModelList);
     }
 
+    @Deprecated
     public BootcampDto findById(Long id) {
         var model = bootcampRepository.findById(id);
         return BootcampModelDtoMapper.INSTANCE.toDto(model);
+    }
+
+    public BootcampFullDto findByIdWithFullInfo(Long id) {
+        var bootcampModel = bootcampRepository.findById(id);
+        var courseModelList = courseRepository.findAllByBootcampId(id, Pageable.unpaged());
+        var careerModelList = bootcampCareerRepository.findAllByBootcampId(id);
+        var bootcampFullDto = BootcampModelDtoMapper.INSTANCE.toFullDto(bootcampModel);
+
+        bootcampFullDto.setCourseDtoList(CourseModelToDtoMapper.INSTANCE.toDto(courseModelList));
+        bootcampFullDto.setCareerModelList(careerModelList);
+        return bootcampFullDto;
     }
 
     public Boolean deleteById(Long id, Long userId, boolean isAdmin) {

@@ -1,6 +1,7 @@
 package com.example.mooc.controller;
 
-import com.example.mooc.dto.response.BootcampDto;
+import com.example.mooc.dto.BootcampDto;
+import com.example.mooc.dto.response.BootcampFullDto;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
 import com.example.mooc.service.BootcampService;
 import com.example.mooc.utils.AuthorizationUtils;
@@ -21,13 +22,13 @@ public class BootcampController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    BootcampDto createBootcamp(@RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
+    public BootcampDto createBootcamp(@RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
         bootcampDto.setUserId(AuthorizationUtils.getUserId(principal));
         return bootcampService.create(bootcampDto);
     }
 
     @PutMapping("/{id}")
-    BootcampDto updateBootcamp(@PathVariable Long id, @RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
+    public BootcampDto updateBootcamp(@PathVariable Long id, @RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
         bootcampDto.setId(id);
         if (AuthorizationUtils.isNotAdmin(principal)) {
              bootcampDto.setUserId(AuthorizationUtils.getUserId(principal));
@@ -36,17 +37,17 @@ public class BootcampController {
     }
 
     @GetMapping
-    List<BootcampDto> getAllBootcamp(Pageable pageable, @RequestParam(value = "filter-by", defaultValue = "") FilterBy filterBy) {
+    public List<BootcampDto> getAllBootcamp(Pageable pageable, @RequestParam(value = "filter-by", defaultValue = "") FilterBy filterBy) {
         return bootcampService.findAll(pageable, filterBy);
     }
 
     @GetMapping("/{id}")
-    BootcampDto findOneById(@PathVariable Long id) {
-        return bootcampService.findById(id);
+    public BootcampFullDto findOneByIdWithFullInfo(@PathVariable Long id) {
+        return bootcampService.findByIdWithFullInfo(id);
     }
 
     @DeleteMapping("/{id}")
-    void deleteBootcampById(@PathVariable Long id, JwtAuthenticationToken principal) {
+    public void deleteBootcampById(@PathVariable Long id, JwtAuthenticationToken principal) {
         bootcampService.deleteById(id, AuthorizationUtils.getUserId(principal), AuthorizationUtils.isNotAdmin(principal));
     }
 
