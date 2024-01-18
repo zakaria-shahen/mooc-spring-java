@@ -1,8 +1,6 @@
 package com.example.mooc.repository.impl.interceptors.specification;
 
-import com.example.mooc.repository.impl.interceptors.Paging;
-import com.example.mooc.repository.impl.interceptors.Select;
-import com.example.mooc.repository.impl.interceptors.SelectFields;
+import com.example.mooc.repository.impl.interceptors.*;
 import jakarta.annotation.Nonnull;
 import org.springframework.data.domain.Pageable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -19,13 +17,17 @@ public class CustomJdbcClient implements JdbcClient {
     private final List<JdbcClientSqlInterceptor> interceptorList = new ArrayList<>();
     private final Paging pagingParserInterceptor;
     private final SelectFields selectFieldsInterceptor;
+    private final FilterResult filterResultInterceptor;
 
+    private FilterBy filterBy = null;
     private Pageable pageable = null;
     private Select selectFields;
 
-    public CustomJdbcClient(JdbcTemplate jdbcTemplate, Paging pagingParser, SelectFields selectFields) {
+
+    public CustomJdbcClient(JdbcTemplate jdbcTemplate, Paging pagingParser, FilterResult filterResult, SelectFields selectFields) {
         this.jdbcClient = JdbcClient.create(jdbcTemplate);
         this.pagingParserInterceptor = pagingParser;
+        this.filterResultInterceptor = filterResult;
         this.selectFieldsInterceptor = selectFields;
     }
 
@@ -36,16 +38,23 @@ public class CustomJdbcClient implements JdbcClient {
 
     @Override
     public StatementSpec sql(String sql) {
-        String finalSql = parserSqlCache.computeIfAbsent(sql, this::applyInterceptor);
-        if (pageable != null) {
-            finalSql = pagingParserInterceptor.intercept(finalSql, pageable);
-            pageable = null;
-        }
+        String finalSql = parserSqlCache.computeIfAbsent(sql,  this::applyInterceptor);
+
+        finalSql = filterResultInterceptor.intercept(finalSql, filterBy);
+        filterBy = null;
 
         finalSql = selectFieldsInterceptor.intercept(finalSql, selectFields);
         selectFields = null;
 
+        finalSql = pagingParserInterceptor.intercept(finalSql, pageable);
+        pageable = null;
+
         return jdbcClient.sql(finalSql);
+    }
+
+    public CustomJdbcClient filterBy(FilterBy filterBy) {
+        this.filterBy = filterBy;
+        return this;
     }
 
     public CustomJdbcClient pageable(Pageable pageable) {

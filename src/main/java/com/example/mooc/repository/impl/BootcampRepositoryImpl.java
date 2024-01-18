@@ -121,33 +121,35 @@ public class BootcampRepositoryImpl implements BootcampRepository {
     public List<BootcampModel> findAll(Pageable pageable, FilterBy filterBy) {
         var sql = STR."""
         select
-            id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id
-        from BOOTCAMP !filter(\{filterBy.size()})
+            !filterByAndSelectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
+        from BOOTCAMP
         """.strip();
 
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
         return jdbcClient.pageable(pageable)
+                .filterBy(filterBy)
                 .sql(sql)
-                .params(filterBy.asParams())
+                .params(filterBy.asValues())
                 .query(BootcampModel.class)
                 .list();
     }
 
     @Override
     public List<Map<String, Object>> findAll(Pageable pageable, FilterBy filterBy, Select select) {
-        var sql = STR."""
+        var sql = """
         select
-            !selectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
-        from BOOTCAMP !filter(\{filterBy.size()})
+            !filterByAndSelectFields(id, name, description, website, phone, email, address, housing, job_assistance, job_guarantee, average_cost, average_rating, user_id)
+        from BOOTCAMP
         """.strip();
 
         logger.info("trying to fetch all BOOTCAMP");
         logger.debug("execute select query: {}", sql);
         return jdbcClient.pageable(pageable)
+                .filterBy(filterBy)
                 .selectFields(select)
                 .sql(sql)
-                .params(filterBy.asParams())
+                .params(filterBy.asValues())
                 .query(new ColumnMapRowMapper())
                 .list();
     }

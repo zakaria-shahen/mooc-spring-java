@@ -1,6 +1,7 @@
 package com.example.mooc.repository.impl.interceptors;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -17,21 +18,20 @@ public class FiltersConverter implements Converter<String, FilterBy> {
     @Override
     public FilterBy convert(String source) {
         if (source.isEmpty()) {
-            return new FilterBy(0, Collections.emptyList());
+            return new FilterBy(Collections.emptyList(), Collections.emptyList());
         }
-        List<String> asParams = convertToList(source);
-        int size = asParams.isEmpty() ? 0 : asParams.size() / 2;
-        return new FilterBy(size, asParams);
+        List<String> asValues = new ArrayList<>();
+        List<String> asNames = new ArrayList<>();
+        convertToList(source, asNames, asValues);
+        return new FilterBy(asNames, asValues);
     }
 
-    private List<String> convertToList(String input) {
-        var list = new ArrayList<String>();
+    private void convertToList(String input, List<String> asNames, List<String> asValues) {
         for (String it : input.split(",")) {
             var keyValues = it.split(":");
-            list.add(keyValues[0]);
-            list.add(keyValues[1]);
+            asNames.add(JdbcUtils.convertPropertyNameToUnderscoreName(keyValues[0]));
+            asValues.add(keyValues[1]);
         }
-        return list;
     }
 
 }

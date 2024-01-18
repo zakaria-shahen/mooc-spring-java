@@ -115,9 +115,9 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp should returns list of bootcamp")
         void findAllSuccessfully() {
              bootcampRepository.create(bootcampSupplier.get());
-             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()));
+             var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(List.of(), List.of()));
              Assertions.assertThat(bootcampList)
-                     .hasSizeGreaterThan(0)
+                     .isNotEmpty()
                      .hasAtLeastOneElementOfType(BootcampModel.class);
         }
 
@@ -125,9 +125,9 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp and select columns then returns list of bootcamp")
         void findAllSuccessfullyWithSelectColumns() {
             bootcampRepository.create(bootcampSupplier.get());
-            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(0, List.of()), new Select("id"));
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(List.of(), List.of()), new Select("id"));
             Assertions.assertThat(bootcampList)
-                    .hasSizeGreaterThan(0)
+                    .isNotEmpty()
                     .hasAtLeastOneElementOfType(Map.class);
             Assertions.assertThat(bootcampList.getFirst().get("id")).isNotNull();
         }
@@ -136,10 +136,10 @@ class BootcampRepositoryImplTest {
         @DisplayName("when trying to find all bootcamp and DB doesn't have Bootcamp should returns empty list")
         void findAllSuccessfullyWithEmptyList() {
             bootcampRepository.create(bootcampSupplier.get());
-            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(1, List.of("name", "omar")));
+            var bootcampList = bootcampRepository.findAll(Pageable.ofSize(10), new FilterBy(List.of("name"), List.of("omar_")));
 
             Assertions.assertThat(bootcampList)
-                    .hasSize(0);
+                    .isEmpty();
         }
     }
 

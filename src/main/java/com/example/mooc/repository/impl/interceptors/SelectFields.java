@@ -14,12 +14,12 @@ public class SelectFields implements JdbcClientSqlInterceptorWith<Select> {
         // input: select !selectFields(id, user_id, name as n) from bootcamp
         // output: select id, user_id, name from bootcamp;
 
-        var matcher = Pattern.compile("!selectFields\\((.+)\\)").matcher(sql);
+        var matcher = Pattern.compile("(!selectFields|!filterByAndSelectFields)\\((.+)\\)").matcher(sql);
         if (!matcher.find()) {
             return sql;
         }
         var selectFieldsStatement = matcher.group(0);
-        var availableColumns = matcher.group(1);
+        var availableColumns = matcher.group(2);
 
         if (stringList == null || stringList.fields().isEmpty()) {
              return sql.replace(selectFieldsStatement, availableColumns);

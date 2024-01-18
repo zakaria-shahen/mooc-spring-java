@@ -4,8 +4,8 @@ import java.util.List;
 
 
 public record FilterBy(
-        Integer size,
-        List<String> asParams
+        List<String> asNames,
+        List<String> asValues
 ) {
 
 }

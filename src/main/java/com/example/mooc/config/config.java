@@ -14,9 +14,8 @@ public class config {
 
     @Bean
     CustomJdbcClient customJdbcClient(JdbcTemplate jdbcTemplate) {
-         return new CustomJdbcClient(jdbcTemplate, new Paging(), new SelectFields())
-                 .addInterceptor(new AddNamedParameters())
-                 .addInterceptor(new FilterResult());
+         return new CustomJdbcClient(jdbcTemplate, new Paging(), new FilterResult(), new SelectFields())
+                 .addInterceptor(new AddNamedParameters());
     }
 
 

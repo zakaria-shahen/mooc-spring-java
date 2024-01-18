@@ -12,5 +12,10 @@ class SelectFieldsTest {
         var input = "select !selectFields(id, user_id as user, name as    n, user_id, rating) from bootcamp";
         var output = new SelectFields().intercept(input, new Select(List.of("id", "user", "n"))).strip();
         Assertions.assertThat(output).isEqualTo(("select id, user_id as user, name as    n from bootcamp").strip());
+
+        input = "select !filterByAndSelectFields(id, user_id as user, name as    n, user_id, rating) from bootcamp";
+        output = new SelectFields().intercept(input, new Select(List.of("id", "user", "n"))).strip();
+        Assertions.assertThat(output).isEqualTo(("select id, user_id as user, name as    n from bootcamp").strip());
+
     }
 }

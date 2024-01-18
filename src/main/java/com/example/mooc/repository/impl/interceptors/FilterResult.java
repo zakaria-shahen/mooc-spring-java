@@ -1,36 +1,48 @@
 package com.example.mooc.repository.impl.interceptors;
 
-import com.example.mooc.repository.impl.interceptors.specification.JdbcClientSqlInterceptor;
+import com.example.mooc.exception.SelectFieldNameNotExists;
+import com.example.mooc.repository.impl.interceptors.specification.JdbcClientSqlInterceptorWith;
 
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-public class FilterResult implements JdbcClientSqlInterceptor {
-    public String intercept(String sql) {
-        // match to get !filter(N) and N in list
-        // RegEx: !filter\((.+)\)
-        var matcher = Pattern.compile("!filter\\((.+)\\)").matcher(sql);
-        if (!matcher.find()) {
+public class FilterResult implements JdbcClientSqlInterceptorWith<FilterBy> {
+
+    public String intercept(String sql, FilterBy filterBy) {
+        if (filterBy == null || filterBy.asNames().isEmpty()) {
             return sql;
         }
-        var filterStatement = matcher.group(0);
-        var numberOfParameters = Integer.valueOf(matcher.group(1));
 
-        sql = sql.replace(filterStatement, "");
-        sql = STR."select * from (\{sql}) \{where(numberOfParameters)}";
+        String availableColumns = extreactAvailableColumns(sql);
+
+        sql = STR."select * from (\{sql}) \{where(availableColumns, filterBy)}";
         return sql;
     }
 
-    private String where(Integer size) {
-        if (size == 0) {
-            return "";
-        }
-
+    private String where(String availableColumns, FilterBy filterBy) {
         final int DELETE_LAST_OPERATOR = 5;
-        var where = STR."""
-                  where \{" ? = ? and".repeat(size)}
-                """;
+        var where = STR."where \{filterBy.asNames().stream().map(it -> STR."\{checkSqlInject(availableColumns, it)} = ? and ")
+                .collect(Collectors.joining(""))}";
+
         where = where.substring(0, where.length() - DELETE_LAST_OPERATOR);
         return where;
+
+    }
+
+    private String checkSqlInject(String availableColumns, String columnName) {
+
+        if (availableColumns.contains(columnName) && columnName.toLowerCase().matches("^[a-z_]+$")) {
+            return columnName;
+        }
+        throw new SelectFieldNameNotExists();
+    }
+
+    private String extreactAvailableColumns(String sql) {
+        var matcher = Pattern.compile("(!selectFields|!filterByAndSelectFields)\\((.+)\\)").matcher(sql);
+        if (!matcher.find()) {
+            return sql;
+        }
+        return matcher.group(2);
     }
 
 }

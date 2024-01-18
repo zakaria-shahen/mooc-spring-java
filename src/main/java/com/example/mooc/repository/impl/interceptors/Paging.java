@@ -7,7 +7,7 @@ public class Paging implements JdbcClientSqlInterceptorWith<Pageable> {
 
     @Override
     public String intercept(String sql, Pageable pageable) {
-        if (pageable.isUnpaged()) {
+        if (pageable == null || pageable.isUnpaged()) {
             return sql;
         }
         long offset = pageable.getOffset(); // to make sure it's long or int always, to prevent SQL injection
