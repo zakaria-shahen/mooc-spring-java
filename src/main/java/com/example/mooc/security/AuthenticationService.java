@@ -39,7 +39,7 @@ public class AuthenticationService {
     public LoginResponse authenticate(LoginRequest loginRequest) throws AuthenticationException {
         UserModel user = userService.loadUserByPrincipalAndApplyLoginAttempts(loginRequest.principal());
 
-        if (user.isStatus()) {
+        if (!user.isStatus()) {
              throw new AuthInvalidException();
         }
         

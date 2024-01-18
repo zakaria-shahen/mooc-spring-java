@@ -1,4 +1,4 @@
-insert into user_(name, email, password) values ('admin', 'admin@admin', 'admin');
+insert into user_(name, email, password, role) values ('admin', 'admin@admin', '{bcrypt}$2a$10$4vPtlu/7ULWOIKhzJERDKul2EnzN1ziqezUXSERkXh86izeKvND7K', 'ROLE_ADMIN');
 insert into CAREER(name) values ('Java');
 
 INSERT INTO BOOTCAMP (NAME, DESCRIPTION, WEBSITE, PHONE, EMAIL, ADDRESS, HOUSING, JOB_ASSISTANCE,
