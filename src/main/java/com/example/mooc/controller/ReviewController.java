@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @AllArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/bootcamp/{bootcampId}/course/{courseId}/review")
 public class ReviewController {
 
