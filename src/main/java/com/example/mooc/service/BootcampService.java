@@ -10,11 +10,13 @@ import com.example.mooc.repository.BootcampCareerRepository;
 import com.example.mooc.repository.BootcampRepository;
 import com.example.mooc.repository.CourseRepository;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
+import com.example.mooc.repository.impl.interceptors.Select;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Service
@@ -36,9 +38,8 @@ public class BootcampService {
         return BootcampModelDtoMapper.INSTANCE.toDto(model);
     }
 
-    public List<BootcampDto> findAll(Pageable pageable, FilterBy filterBy) {
-        var bootcampModelList = bootcampRepository.findAll(pageable, filterBy);
-        return BootcampModelDtoMapper.INSTANCE.toDto(bootcampModelList);
+    public List<Map<String, Object>> findAll(Pageable pageable, FilterBy filterBy, Select select) {
+        return bootcampRepository.findAll(pageable, filterBy, select);
     }
 
     @Deprecated

@@ -14,7 +14,7 @@ public class SelectConverter implements Converter<String, Select> {
 
     @Override
     public Select convert(String selectParameter) {
-        if (selectParameter == null) {
+        if (selectParameter == null || selectParameter.isBlank()) {
             return new Select(List.of());
         }
         var listOfFiled = List.of(selectParameter.split(","));

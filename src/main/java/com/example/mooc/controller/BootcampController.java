@@ -3,6 +3,7 @@ package com.example.mooc.controller;
 import com.example.mooc.dto.BootcampDto;
 import com.example.mooc.dto.response.BootcampFullDto;
 import com.example.mooc.repository.impl.interceptors.FilterBy;
+import com.example.mooc.repository.impl.interceptors.Select;
 import com.example.mooc.service.BootcampService;
 import com.example.mooc.utils.AuthorizationUtils;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -37,8 +39,12 @@ public class BootcampController {
     }
 
     @GetMapping
-    public List<BootcampDto> getAllBootcamp(Pageable pageable, @RequestParam(value = "filter-by", defaultValue = "") FilterBy filterBy) {
-        return bootcampService.findAll(pageable, filterBy);
+    public List<Map<String, Object>> getAllBootcamp(
+            Pageable pageable,
+            @RequestParam(value = "filter-by", defaultValue = "") FilterBy filterBy,
+            @RequestParam(defaultValue = "") Select select
+    ) {
+        return bootcampService.findAll(pageable, filterBy, select);
     }
 
     @GetMapping("/{id}")

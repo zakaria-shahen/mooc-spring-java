@@ -15,7 +15,7 @@ public class FilterResult implements JdbcClientSqlInterceptorWith<FilterBy> {
 
         String availableColumns = extreactAvailableColumns(sql);
 
-        sql = STR."select * from (\{sql}) \{where(availableColumns, filterBy)}";
+        sql = STR."\{sql} \{where(availableColumns, filterBy)}";
         return sql;
     }
 
