@@ -54,8 +54,8 @@ public class BootcampService {
         var careerModelList = bootcampCareerRepository.findAllByBootcampId(id);
         var bootcampFullDto = BootcampModelDtoMapper.INSTANCE.toFullDto(bootcampModel);
 
-        bootcampFullDto.setCourseDtoList(CourseModelToDtoMapper.INSTANCE.toDto(courseModelList));
-        bootcampFullDto.setCareerModelList(careerModelList);
+        bootcampFullDto.setCourseList(CourseModelToDtoMapper.INSTANCE.toDto(courseModelList));
+        bootcampFullDto.setCareerList(careerModelList);
         return bootcampFullDto;
     }
 

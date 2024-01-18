@@ -77,19 +77,19 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Override
     public List<CourseModel> findAllByBootcampId(Long bootcampId, Pageable pageable) {
-        var sql = "select title, description, weeks, tuition, minimum_skill, cost, bootcamp_id, user_id from COURSE where bootcamp_id = ?";
+        var sql = "select id, title, description, weeks, tuition, minimum_skill, cost, bootcamp_id, user_id from COURSE where bootcamp_id = ?";
         logger.info("trying to fetch all COURSE");
         logger.debug("execute select query: {}", sql);
         return jdbcClient.pageable(pageable)
                 .sql(sql)
-                .params(bootcampId)
+                .param(bootcampId)
                 .query(CourseModel.class)
                 .list();
     }
 
     @Override
     public CourseModel findById(Long id) {
-        var sql = "select title, description, weeks, tuition, minimum_skill, cost, bootcamp_id, user_id from COURSE where id = ?";
+        var sql = "select id, title, description, weeks, tuition, minimum_skill, cost, bootcamp_id, user_id from COURSE where id = ?";
         logger.info("trying to fetch one COURSE where id = {}", id);
         logger.debug("execute select query: {}", sql);
         return jdbcClient.sql(sql)

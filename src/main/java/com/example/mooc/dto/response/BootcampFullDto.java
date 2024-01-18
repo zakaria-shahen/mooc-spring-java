@@ -31,7 +31,7 @@ public class BootcampFullDto {
     private Float averageRating;
     @NotNull
     private Long userId;
-    private List<CareerModel> careerModelList;
-    private List<CourseDto> courseDtoList;
+    private List<CareerModel> careerList;
+    private List<CourseDto> courseList;
 
 }

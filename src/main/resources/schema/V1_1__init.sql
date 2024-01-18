@@ -9,7 +9,7 @@ CREATE TABLE USER_
     password       VARCHAR2(70) NOT NULL,
     status         NUMBER(1) DEFAULT 1,
     login_attempts NUMBER(1) DEFAULT 0,
-    role           CHAR(15) CHECK (role IN ('ROLE_ADMIN', 'ROLE_PUBLISHER', 'ROLE_USER')),
+    role           VARCHAR2(15) CHECK (role IN ('ROLE_ADMIN', 'ROLE_PUBLISHER', 'ROLE_USER')),
     CONSTRAINT user_email_unique UNIQUE (email),
     CONSTRAINT user_pk PRIMARY KEY (id)
 );
@@ -73,7 +73,7 @@ CREATE TABLE COURSE
     description   VARCHAR2(255)                           NOT NULL,
     weeks         NUMBER                                  NOT NULL,
     tuition       NUMBER                                  NOT NULL,
-    minimum_skill CHAR(15) CHECK (
+    minimum_skill VARCHAR2(15) CHECK (
         minimum_skill IN (
                           'BEGINNER',
                           'INTERMEDIATE',
