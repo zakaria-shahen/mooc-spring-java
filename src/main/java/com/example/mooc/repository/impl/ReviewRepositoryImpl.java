@@ -24,7 +24,7 @@ public class ReviewRepositoryImpl implements ReviewRepository {
 
     @Override
     public ReviewModel create(ReviewModel reviewModel) {
-        var sql = "insert into REVIEW(#id, #title, #text, #rating, #course_id, #user_id) values(@@)";
+        var sql = "insert into REVIEW(#title, #text, #rating, #course_id, #user_id) values(@@)";
         logger.info("trying execute insert query against REVIEW for review title -> {}", reviewModel.getTitle());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
