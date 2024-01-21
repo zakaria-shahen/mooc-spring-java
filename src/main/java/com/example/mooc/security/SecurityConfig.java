@@ -30,11 +30,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/bootcamp/**",
                                 "/career/**"
-                        ).anonymous()
+                        ).permitAll()
                         .requestMatchers(
                                 "/auth/**",
                                 "/health"
-                        ).anonymous()
+                        ).permitAll()
                         .anyRequest().authenticated()
         ).csrf(AbstractHttpConfigurer::disable)
                 .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer ->  httpSecurityOAuth2ResourceServerConfigurer.jwt(
