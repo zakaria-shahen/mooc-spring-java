@@ -29,7 +29,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/logout").authenticated()
                         .requestMatchers(HttpMethod.GET,
                                 "/bootcamp/**",
-                                "/career/**"
+                                "/career/**",
+                                // TODO: disable, if bootcamp API private API not a public API.
+                                "/v3/api-docs",
+                                "swagger-ui*/*"
                         ).permitAll()
                         .requestMatchers(
                                 "/auth/**",
