@@ -13,7 +13,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/bootcamp/{bootcampId}/course")
+@RequestMapping({"/bootcamp/{bootcampId}/course", "/bootcamp/course"})
 public class CourseController {
 
     private CourseService courseService;
@@ -30,23 +30,31 @@ public class CourseController {
 
     @PostMapping
     public CourseDto create(@RequestBody CourseDto courseDto, @PathVariable Long bootcampId, JwtAuthenticationToken principle) {
-        courseDto.setId(null);
+        var isNotAdmin = AuthorizationUtils.isNotAdmin(principle);
+        var userId = (courseDto.getUserId() == null || isNotAdmin) ? AuthorizationUtils.getUserId(principle) : courseDto.getUserId();
+        courseDto.setUserId(userId);
         courseDto.setBootcampId(bootcampId);
-        courseDto.setUserId(AuthorizationUtils.getUserId(principle));
-        return courseService.create(courseDto, AuthorizationUtils.isAdmin(principle));
+        courseDto.setId(null);
+        return courseService.create(courseDto, !isNotAdmin);
     }
 
-    @PostMapping("/{courseId}")
-    public CourseDto update(@PathVariable Long bootcampId, @PathVariable Long courseId, @RequestBody CourseDto courseDto, JwtAuthenticationToken principle) {
-        courseDto.setId(courseId);
-        courseDto.setBootcampId(bootcampId);
-        courseDto.setUserId(AuthorizationUtils.getUserId(principle));
-        return courseService.update(courseDto, AuthorizationUtils.isAdmin(principle));
+    @PutMapping("/{courseId}")
+    public CourseDto update(@PathVariable(required = false) Long bootcampId, @PathVariable(required = false) Long courseId, @RequestBody CourseDto courseDto, JwtAuthenticationToken principle) {
+        var isNotAdmin = AuthorizationUtils.isNotAdmin(principle);
+        var userId = (courseDto.getUserId() == null || isNotAdmin) ? AuthorizationUtils.getUserId(principle) : courseDto.getUserId();
+        courseDto.setUserId(userId);
+        if (courseId != null) {
+            courseDto.setId(courseId);
+        }
+        if (bootcampId != null) {
+            courseDto.setBootcampId(bootcampId) ;
+        }
+        return courseService.update(courseDto, !isNotAdmin);
     }
 
     @DeleteMapping("/{courseId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long bootcampId, @PathVariable Long courseId, JwtAuthenticationToken principle) {
+    public void delete(@PathVariable(required = false) Long bootcampId, @PathVariable Long courseId, JwtAuthenticationToken principle) {
          courseService.delete(courseId, AuthorizationUtils.getUserId(principle), AuthorizationUtils.isAdmin(principle));
     }
 

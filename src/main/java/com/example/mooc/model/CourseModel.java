@@ -19,7 +19,7 @@ public class CourseModel {
     @NotBlank private String description;
     @NotNull @Min(1) private Integer weeks;
     @NotNull private BigDecimal tuition;
-    @NotNull private MinimumSkill minimumSkill;
+    @NotNull private String minimumSkill;
     @NotNull private BigDecimal cost;
     @NotNull private Long bootcampId;
     @NotNull private Long userId;

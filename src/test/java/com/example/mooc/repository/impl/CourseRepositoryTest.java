@@ -25,7 +25,7 @@ class CourseRepositoryTest {
                         .description("dfidf")
                         .weeks(1)
                         .tuition(BigDecimal.ONE)
-                        .minimumSkill(CourseModel.MinimumSkill.ADVANCED)
+                        .minimumSkill(CourseModel.MinimumSkill.ADVANCED.name())
                         .cost(BigDecimal.ONE)
                         .userId(1L)
                         .bootcampId(1L)

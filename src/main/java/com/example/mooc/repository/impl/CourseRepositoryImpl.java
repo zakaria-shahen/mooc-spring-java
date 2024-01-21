@@ -42,8 +42,8 @@ public class CourseRepositoryImpl implements CourseRepository {
     @Override
     public CourseModel update(CourseModel courseModel, Boolean isAdmin) {
         var sql = STR."""
-                    update BOOTCAMP SET #title = @, #description = @, #weeks = @, #tuition = @, #minimum_skill = @, #cost= @
-                    where #id = @ and (user_id = @ or 1 = \{isAdmin? 1 : 0})
+                    update COURSE SET #title = @, #description = @, #weeks = @, #tuition = @, #minimum_skill = @, #cost= @
+                    where #id = @ and (#user_id = @ or 1 = \{isAdmin? 1 : 0})
                 """.strip();
         logger.info("trying updating query against COURSE for Course id -> {}, user id -> {}", courseModel.getId(), courseModel.getUserId());
         logger.debug("execute update query: {}", sql);
@@ -61,8 +61,17 @@ public class CourseRepositoryImpl implements CourseRepository {
 
     @Override
     public Boolean delete(Long courseId, Long userId, Boolean isAdmin) {
-        var sql = "delete from COURSE where id = ? and (user_id = ? or 1 = ?)";
+        var sql = """
+            begin 
+                delete from REVIEW where COURSE_ID = ?;
+                delete from COURSE where id = ? and (user_id = ? or 1 = ?);
+                if SQL%ROWCOUNT = 0 then
+                    raise_application_error(-20000, 'not found course');
+                end if;
+           end;
+        """;
         var affectRows = jdbcClient.sql(sql)
+                .param(courseId)
                 .param(courseId)
                 .param(userId)
                 .param(isAdmin? 1 : 0)
