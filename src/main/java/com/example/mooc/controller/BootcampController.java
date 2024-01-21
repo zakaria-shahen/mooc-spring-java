@@ -25,16 +25,20 @@ public class BootcampController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public BootcampDto createBootcamp(@RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
-        bootcampDto.setUserId(AuthorizationUtils.getUserId(principal));
+        var userId = (bootcampDto.getUserId() == null || AuthorizationUtils.isNotAdmin(principal)) ? AuthorizationUtils.getUserId(principal) : bootcampDto.getUserId();
+        bootcampDto.setUserId(userId);
+        bootcampDto.setAverageCost(null);
+        bootcampDto.setAverageRating(null);
         return bootcampService.create(bootcampDto);
     }
 
     @PutMapping("/{id}")
     public BootcampDto updateBootcamp(@PathVariable Long id, @RequestBody BootcampDto bootcampDto, JwtAuthenticationToken principal) {
+        var userId = (bootcampDto.getUserId() == null || AuthorizationUtils.isNotAdmin(principal))? AuthorizationUtils.getUserId(principal) : id;
+        bootcampDto.setUserId(userId);
+        bootcampDto.setAverageCost(null);
+        bootcampDto.setAverageRating(null);
         bootcampDto.setId(id);
-        if (AuthorizationUtils.isNotAdmin(principal)) {
-             bootcampDto.setUserId(AuthorizationUtils.getUserId(principal));
-        }
         return bootcampService.updateBootcamp(bootcampDto);
     }
 
@@ -54,7 +58,7 @@ public class BootcampController {
 
     @DeleteMapping("/{id}")
     public void deleteBootcampById(@PathVariable Long id, JwtAuthenticationToken principal) {
-        bootcampService.deleteById(id, AuthorizationUtils.getUserId(principal), AuthorizationUtils.isNotAdmin(principal));
+        bootcampService.deleteById(id, AuthorizationUtils.getUserId(principal), AuthorizationUtils.isAdmin(principal));
     }
 
 

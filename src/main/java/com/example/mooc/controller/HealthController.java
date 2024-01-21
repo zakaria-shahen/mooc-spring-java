@@ -18,7 +18,7 @@ public class HealthController {
     }
 
     @GetMapping("/health/Authenticated")
-    @PreAuthorize("hasAnyAuthority('SCOPE_USER')")
+    @PreAuthorize("hasAnyAuthority('SCOPE_USER', 'SCOPE_ADMIN')")
     public Map<Object, Object> getStatus(JwtAuthenticationToken principal) {
         return Map.of(
                 "status", principal.getToken().getClaims(),
