@@ -1,4 +1,12 @@
-## MOOC - Spring boot / Java API
+## Massive Open Online Courses (MOOC) API using Java, Spring ecosystem 
+
+### What's new? (Technical)
+
+- Use new JdbcClient
+- Implement basic OAuth2 server.
+- [Experiment] Apply native filtering and pagination at the framework level instead of the business code level by introducing the **JdbcClient SQL interpreter**.
+- use Docker Compose support in Spring Boot 3.1
+- use new String template (STR Template Processor) in Java 21
 
 ### How to run?
 
@@ -7,11 +15,7 @@
     .\mvnw spring-boot:run
 ```
 
+### API docs
 
-### Git workflow
-
-- main branch: production version 
-- support branch: hot fix for production version
-- feature branch: new feature
-  - When working on a new feature, create your feature branch in this manner. `feature\<username>\<feature-name>`
-- more information? [Gitflow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow).
+- Swagger-ui: http://localhost:8081/swagger-ui/index.html
+- Swagger api: http://localhost:8081/v3/api-docs

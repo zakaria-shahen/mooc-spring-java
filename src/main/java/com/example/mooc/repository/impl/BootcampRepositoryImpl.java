@@ -37,8 +37,8 @@ public class BootcampRepositoryImpl implements BootcampRepository {
         logger.info("trying execute insert query against BOOTCAMP for bootcamp name -> {}", bootcampModel.getName());
         logger.debug("execute insert query: {}", sql);
         var keyHolder = new GeneratedKeyHolder();
-        // `jdbcClient.update(keyHolder, ... keyColumnNames) method
-        // it's exists because my issue & PR 😎: https://github.com/spring-projects/spring-framework/issues/31607
+        // Thank you spring team for quickly responded/help ❤️ by introducing `jdbcClient.update(keyHolder, ... keyColumnNames)`
+        // My issue & PR: https://github.com/spring-projects/spring-framework/issues/31607
         jdbcClient.sql(sql)
                 .paramSource(bootcampModel)
                 .update(keyHolder, "id");
