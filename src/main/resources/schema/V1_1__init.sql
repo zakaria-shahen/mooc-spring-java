@@ -9,7 +9,7 @@ CREATE TABLE USER_
     password       VARCHAR2(70) NOT NULL,
     status         NUMBER(1) DEFAULT 1,
     login_attempts NUMBER(1) DEFAULT 0,
-    role           VARCHAR2(15) CHECK (role IN ('ROLE_ADMIN', 'ROLE_PUBLISHER', 'ROLE_USER')),
+    role           VARCHAR2(15) CHECK (role IN ('ADMIN', 'PUBLISHER', 'USER')),
     CONSTRAINT user_email_unique UNIQUE (email),
     CONSTRAINT user_pk PRIMARY KEY (id)
 );

@@ -64,15 +64,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserModel updateUserBasicInfo(UserModel userModel) {
+    public boolean updateUserBasicInfo(UserModel userModel) {
         boolean isUpdated = jdbcClient
-                                    .sql("update USER_ set #name = @, #email = @, #status = @  where id = :id")
+                                    .sql("update USER_ set #name = @, #email = @ where id = :id")
                                     .paramSource(userModel)
                                     .update() == 1;
         if (!isUpdated) {
             throw new NotFoundResourceWhileUpdatingException();
         }
-        return userModel;
+        return true;
     }
 
     @Override
@@ -82,6 +82,6 @@ public class UserRepositoryImpl implements UserRepository {
                 .param(id)
                 .query(UserModel.class)
                 .optional()
-                .orElseThrow(NotFoundResourceWhileFetchingException::new);
+                .orElseThrow(RuntimeException::new);
     }
 }

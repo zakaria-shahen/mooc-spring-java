@@ -16,7 +16,7 @@ public class UserModel {
     private String password;
     private boolean status;
     private Integer loginAttempts;
-    @NotBlank private String role;
+    @NotBlank private ROLE role;
 
     public enum ROLE {
            ADMIN, PUBLISHER, USER

@@ -9,7 +9,7 @@ import com.example.mooc.dto.response.LoginResponse;
 import com.example.mooc.exception.AuthInvalidException;
 import com.example.mooc.model.UserModel;
 import com.example.mooc.security.AuthenticationService;
-import com.example.mooc.security.JweService;
+import com.example.mooc.utils.AuthorizationUtils;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
@@ -62,13 +62,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     public Map<String, String> logout(
-            @RequestParam("refresh_token")
-            String refreshToken,
+            @RequestParam("refresh-token") String refreshToken,
             JwtAuthenticationToken principal
     ) {
         authenticationService.logout(
                 principal.getToken().getTokenValue(),
-                (long) principal.getTokenAttributes().get(JweService.ClaimNames.USER_ID),
+                AuthorizationUtils.getUserId(principal),
                 refreshToken
         );
 

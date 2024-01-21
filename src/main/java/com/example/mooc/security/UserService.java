@@ -42,10 +42,9 @@ public class UserService {
         return userRepository.updateUser(userModel);
     }
 
-    public UserDto updateUser(UserDto userDto) {
+    public boolean updateUserBasicInfo(UserDto userDto) {
         var model = UserModelToDtoMapper.INSTANCE.toModel(userDto);
-        model = userRepository.updateUserBasicInfo(model);
-        return UserModelToDtoMapper.INSTANCE.toDto(model);
+        return userRepository.updateUserBasicInfo(model);
     }
 
     public UserDto fetchById(Long id) {

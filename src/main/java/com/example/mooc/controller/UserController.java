@@ -4,31 +4,37 @@ import com.example.mooc.dto.UserDto;
 import com.example.mooc.security.UserService;
 import com.example.mooc.utils.AuthorizationUtils;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/user")
 public class UserController {
 
     private UserService userService;
+    private AuthController authController;
 
-    @GetMapping("{id}")
+    @GetMapping({"/{id}", ""})
     public UserDto fetch(@PathVariable(required = false) Long id, JwtAuthenticationToken principle) {
-        id = (id != null && AuthorizationUtils.isAdmin(principle)) ? id : AuthorizationUtils.getUserId(principle);
+        id = (id == null || AuthorizationUtils.isNotAdmin(principle)) ? AuthorizationUtils.getUserId(principle) : id;
         return userService.fetchById(id);
+
     }
 
-    @PutMapping("{id}")
-    public UserDto update(@PathVariable(required = false) Long id, @RequestBody UserDto userDto, JwtAuthenticationToken principle) {
-        if (AuthorizationUtils.isAdmin(principle)) {
-            id = id != null ? id : AuthorizationUtils.getUserId(principle);
-            userDto.setId(id);
-        } else {
-            userDto.setId(AuthorizationUtils.getUserId(principle));
-        }
-        return userService.updateUser(userDto);
+    @PutMapping({"{id}", ""})
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(
+            @PathVariable(required = false) Long id,
+            @RequestBody UserDto userDto,
+            JwtAuthenticationToken principle,
+            @RequestParam("refresh-token") String refreshToken
+    ) {
+        id = (id == null || AuthorizationUtils.isNotAdmin(principle)) ? AuthorizationUtils.getUserId(principle) : id;
+        userDto.setId(id);
+        userService.updateUserBasicInfo(userDto);
+        authController.logout(refreshToken, principle);
     }
 }
+
